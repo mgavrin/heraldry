@@ -11,7 +11,7 @@ TODO: (This is just for the anki deck for now, but it will be helpful when I get
   * Ermine
   * Vair
   * Figure out how to go through an image pixel by pixel and swap colors,
-    so you can have arbitrary tinctures of ermine and vair
+    so you can have arbitrary tinctures of ermine and vair and arbitrary tinctures around a complex line
 
 * Field divisions
   * Per pale
@@ -22,12 +22,15 @@ TODO: (This is just for the anki deck for now, but it will be helpful when I get
   * Per bend sinister
   * Per chevron
   * Per chevron throughout
+  * Per saltire
   * Gyronny 8
   * Gyronny 10
   * Lozengy
+  * Fretty
+  * Scaly
   * Complex lines of division
     * Assemble sets of points/bezier curves for complex lines
-    * find out if it's possible to use a bezier curve as the edge of a color section
+    * Treat a complex line of division as a rectangle with the line through it; colorswap and rotate as necessary
     * Indented
     * Embattled
       * counter-embattled
