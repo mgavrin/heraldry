@@ -8,6 +8,8 @@ TODO: (This is just for the anki deck for now, but it will be helpful when I get
   * Bird (for bird postures)
   * Crescent
   * Mullet
+  * Pheon
+  * Estoile
   * Ermine
   * Vair
   * Figure out how to go through an image pixel by pixel and swap colors,
@@ -22,9 +24,14 @@ TODO: (This is just for the anki deck for now, but it will be helpful when I get
   * Per bend sinister
   * Per chevron
   * Per chevron throughout
+  * Quarterly
+  * In canton
   * Per saltire
+  * Per pall
+  * Per pall reversed
   * Gyronny 8
   * Gyronny 10
+  * Checky
   * Lozengy
   * Fretty
   * Scaly
@@ -32,6 +39,7 @@ TODO: (This is just for the anki deck for now, but it will be helpful when I get
     * Assemble sets of points/bezier curves for complex lines
     * Treat a complex line of division as a rectangle with the line through it; colorswap and rotate as necessary
     * Indented
+    * Rayonny
     * Embattled
       * counter-embattled
       * embattled-counter-embattled
@@ -44,6 +52,7 @@ TODO: (This is just for the anki deck for now, but it will be helpful when I get
 
 * Ordinaries
   * Pale
+  * Endorsed
   * Pallet
   * Fess
   * Bar
@@ -53,17 +62,26 @@ TODO: (This is just for the anki deck for now, but it will be helpful when I get
   * Chief
   * Chevron
   * Chevronel
+  * Mount
+  * Pall
+  * Pall reversed
   * Cotising
 
 * Geometric charges
   * Roundel
     * Bezant
     * Torteau
+  * Billet
   * Crescent
+  * Increscent
+  * Decrescent
+  * Crescent pendant
   * Fleur-de-lys
   * Lozenge
   * Mascle
   * Masculyn
+  * Pheon
+  * Delf
 
 * Lion postures
   * Contourny
