@@ -84,20 +84,43 @@ TODO: (This is just for the anki deck for now, but it will be helpful when I get
   * Delf
 
 * Lion postures
-  * Contourny
+  * Affronty
+  * Sejant affronty
+  * Sejant erect affronty
+  * Contourny versions of all the below
   * Rampant
+  * Salient
   * Sejant
   * Sejant erect
   * Guardant
   * Couchant
   * Passant
-  * Look up the rest
+  * Courant
+  * Statant
+  * Dormant
+  
+* Bonus winged lion postures
+  * Segreant
+  * Segreant contourny
 
 * Bird postures
+  * Displayed
+  * Contourny versions of all the below
+  * Volant
+  * Close
+  * Naiant
+  * Rising
+  * Striking
+  * Roussant
+  * Volant wings addorsed
+  
+* Fish postures
+  * Haurient
+  * Urinant
+  * Naiant
+  * Naiant contourny
 
-* Gryphon postures  
-
-* Arrangements
+* Arrangements of e.g. mullets
   * In pale
   * In fess
   * In bend

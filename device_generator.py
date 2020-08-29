@@ -141,8 +141,6 @@ dexter_base_argent = FieldSection(dexter_base_quarter, kArgent)
 sinister_base_gules = FieldSection(sinister_base_quarter, kGules)
 quarterly = Device("", [dexter_chief_gules, sinister_chief_argent, dexter_base_argent, sinister_base_gules])
 quarterly.display_device()
-'''
-
 chief_saltire_boundary = [[int(kScreenWidth*.03), 0], [int(kScreenWidth/2), int(kScreenHeight*5/12)], [int(kScreenWidth*.97), 0]]
 dexter_saltire_boundary = [[int(kScreenWidth*.03), 0], [int(kScreenWidth/2), int(kScreenHeight*5/12)], [int(kScreenWidth*.03), int(kScreenHeight*10/12)]]
 # There are four points here. Don't mess with this without looking at it really carefully first.
@@ -154,3 +152,34 @@ base_saltire_section = FieldSection(base_saltire_boundary, kArgent)
 sinister_saltire_section = FieldSection(sinister_saltire_boundary, kPurpure)
 per_saltire = Device("", [chief_saltire_section, dexter_saltire_section, base_saltire_section, sinister_saltire_section])
 per_saltire.display_device()
+'''
+
+def get_paly_boundaries(n):
+    '''
+    Returns a list of lists of lists which is the boundary boxes 
+      for a paly of n field.
+    n: the number of sections.
+    '''
+    boundary_sections = []
+    for i in range(n):
+        left_edge = int(kScreenWidth*i/n)
+        right_edge = int(kScreenWidth*(i+1)/n)
+        boundary_sections.append(
+            [[left_edge, 0], [left_edge, kScreenHeight],
+             [right_edge, kScreenHeight], [right_edge, 0]])
+    return boundary_sections
+
+def get_paly_field(num_sections, tinctures):
+    '''
+    Returns a device with a paly field.
+    num_sections: the number of sections.
+    tinctures: a list of tincture objects, e.g. [kVert, kArgent].
+    '''
+    paly_of_n_fieldsections = []
+    boundaries = get_paly_boundaries(num_sections)
+    for i in range(num_sections):
+        paly_of_n_fieldsections.append(FieldSection(boundaries[i], tinctures[i % len(tinctures)]))
+    return Device("", paly_of_n_fieldsections)
+    
+paly_5 = get_paly_field(5, [kVert, kArgent])
+paly_5.display_device()
