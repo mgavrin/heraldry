@@ -14,6 +14,8 @@ class Device:
         field_sections: a list of FieldSection objects.
         charge_groups: a list of ChargeGroup objects.
         '''
+        self.LeftMargin = 70
+        self.TopMargin = 42
         self.ShieldCurveTop = int(kScreenHeight/2)
         self.ShieldBottomPoint = int(kScreenHeight*875/1000)
         self.CtrlPt1 = 650
@@ -47,7 +49,7 @@ class Device:
         for section in self.field_sections:
             field_section_surface = section.draw_field_section()
             # Blit at [0,0] because positioning is handled in the FieldSection object
-            self.screen.blit(field_section_surface, [0,0])
+            self.screen.blit(field_section_surface, [0, 0])
         for charge in self.charge_groups:
             pass
             #charge.draw_charge()
@@ -55,7 +57,7 @@ class Device:
         shield_mask = pygame.transform.scale(
             pygame.image.load(os.path.join("art", "shield mask.png")),
             (kScreenWidth, kScreenHeight))
-        self.screen.blit(shield_mask, [0, 0])
+        self.screen.blit(shield_mask, [0,0])
 
         # Flip the screen to update changes
         pygame.display.flip()

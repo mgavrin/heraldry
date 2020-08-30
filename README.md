@@ -1,6 +1,8 @@
 # heraldry
 Resources for generating SCA armory art.
 
+Known issues: Sometimes the tincture in the dexter chief corner is not the first one in the list passed in. Change the order of the list as a workaround.
+
 TODO: (This is just for the anki deck for now, but it will be helpful when I get to more complex stuff later.)
 
 * Acquire art assets

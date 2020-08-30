@@ -34,12 +34,50 @@ def get_barry_boundaries(n):
     '''
     boundary_sections = []
     for i in range(n):
-        # 0.9 fudge factor because the bottom margin is so large
-        top_edge = int(kScreenHeight*i/n*0.9+kMargin) 
-        bottom_edge = int(kScreenHeight*(i+1)/n*0.9+kMargin)
+        # fudge factor because the bottom margin is so large
+        # +kMargin means the first tincture will always be visible first
+        fudge_factor = 0.85
+        top_edge = int(kScreenHeight*i/n*fudge_factor+kMargin) 
+        bottom_edge = int(kScreenHeight*(i+1)/n*fudge_factor+kMargin)
         boundary_sections.append(
             [[0, top_edge], [kScreenWidth, top_edge],
              [kScreenWidth, bottom_edge], [0, bottom_edge]])
+    return boundary_sections
+
+def get_bendy_boundaries(n):
+    '''
+    Returns a list of lists of lists which is the boundary boxes 
+      for a bendy of n field.
+    n: the number of sections. Use 2 for per bend.
+    '''
+    boundary_sections = []
+    fudge_factor = 1.95 #hack to handle margins
+    for i in range(n):
+        dexter_chief = int(kScreenWidth*i*fudge_factor/n)
+        sinister_chief = int(kScreenWidth*(i+1)*fudge_factor/n)
+        dexter_base = int(kScreenHeight*(i)*fudge_factor/n)
+        sinister_base = int(kScreenHeight*(i+1)*fudge_factor/n)
+        boundary_sections.append(
+            [[dexter_chief, 0], [sinister_chief, 0],
+             [0, sinister_base], [0, dexter_base]])
+    return boundary_sections
+
+def get_bendy_sinister_boundaries(n):
+    '''
+    Returns a list of lists of lists which is the boundary boxes 
+      for a bendy sinister of n field.
+    n: the number of sections. Use 2 for per bend sinister.
+    '''
+    boundary_sections = []
+    fudge_factor = 1.95 #hack to handle margins
+    for i in range(n):
+        dexter_chief = int(kScreenWidth*i*fudge_factor/n)
+        sinister_chief = int(kScreenWidth*(i+1)*fudge_factor/n)
+        dexter_base = int(kScreenHeight*(i)*fudge_factor/n)
+        sinister_base = int(kScreenHeight*(i+1)*fudge_factor/n)
+        boundary_sections.append(
+            [[kScreenWidth-dexter_chief, 0], [kScreenWidth-sinister_chief, 0],
+             [kScreenWidth, sinister_base], [kScreenWidth, dexter_base]])
     return boundary_sections
 
 def get_striped_field(num_sections, tinctures, direction):
@@ -51,8 +89,11 @@ def get_striped_field(num_sections, tinctures, direction):
     direction: a string indicating direction.
       Must be one of the keys in the dict below.
     '''
+    # The values in this dict are functions.
     directions = {"per pale": get_paly_boundaries, "paly": get_paly_boundaries,
-                  "per fess": get_barry_boundaries, "barry": get_barry_boundaries}
+                  "per fess": get_barry_boundaries, "barry": get_barry_boundaries,
+                  "per bend": get_bendy_boundaries, "bendy": get_bendy_boundaries,
+                  "per bend sinister": get_bendy_sinister_boundaries, "bendy sinister": get_bendy_sinister_boundaries}
     fieldsections = []
     boundaries = directions[direction](num_sections)
     for i in range(num_sections):

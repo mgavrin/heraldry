@@ -7,6 +7,6 @@ kAzure = (0, 0, 255)
 kPurpure = (150, 50, 255)
 kScreenWidth = 1000
 kScreenHeight = 1000
-kMargin = int(kScreenWidth/20)
+kMargin = int(kScreenWidth/25)
 
 #Consider also including the various art assets (geometric shapes, lions, etc) in this file.
