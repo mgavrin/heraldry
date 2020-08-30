@@ -100,28 +100,39 @@ def get_striped_field(num_sections, tinctures, direction):
         fieldsections.append(FieldSection(boundaries[i], tinctures[i % len(tinctures)]))
     return Device("", fieldsections)
 
+def get_quarterly_field(tinctures):
+    '''
+    Returns a device object with a quarterly field.
+    tinctures: a list of exactly two tinctures.
+    '''
+    if len(tinctures) != 2 and len(tinctures) != 4:
+        print("Quarterly fields can't have", len(tinctures), "tinctures")
+        return Device("")
+    dexter_chief_quarter = [[0, 0],
+                            [0, int(kScreenHeight*5/12)],
+                            [int(kScreenWidth/2), int(kScreenHeight*5/12)],
+                            [int(kScreenWidth/2), 0]]
+    sinister_chief_quarter = [[int(kScreenWidth/2), 0],
+                              [int(kScreenWidth/2), int(kScreenHeight*5/12)],
+                              [kScreenWidth, int(kScreenHeight*5/12)],
+                              [kScreenWidth, 0]]
+    sinister_base_quarter = [[int(kScreenWidth/2), int(kScreenHeight*5/12)],
+                             [int(kScreenWidth/2), kScreenHeight],
+                             [kScreenWidth, kScreenHeight],
+                             [kScreenWidth, int(kScreenHeight*5/12)]]
+    dexter_base_quarter = [[0, int(kScreenHeight*5/12)],
+                           [0, kScreenHeight],
+                           [int(kScreenWidth/2), kScreenHeight],
+                           [int(kScreenWidth/2), int(kScreenHeight*5/12)]]
+    dexter_chief_section = FieldSection(dexter_chief_quarter, tinctures[0])
+    sinister_chief_section = FieldSection(sinister_chief_quarter, tinctures[1])
+    sinister_base_section = FieldSection(sinister_base_quarter, tinctures[2 % len(tinctures)])
+    dexter_base_section = FieldSection(dexter_base_quarter, tinctures[3 % len(tinctures)])
+    return Device("", [dexter_chief_section, sinister_chief_section,
+                       dexter_base_section, sinister_base_section])
+
 
 '''
-chief_half_boundary = [[0, 0], [0, int(kScreenHeight*5/12)], [kScreenWidth, int(kScreenHeight*5/12)], [kScreenWidth, 0]]
-base_half_boundary = [[0, int(kScreenHeight*5/12)], [0, kScreenHeight], [kScreenWidth, kScreenHeight], [kScreenWidth, int(kScreenHeight*5/12)]]
-chief_gules = FieldSection(chief_half_boundary, kGules)
-base_argent = FieldSection(base_half_boundary, kArgent)
-per_fess = Device("", [chief_gules, base_argent])
-per_fess.display_device()
-
-dexter_chief_boundary = [[0, 0], [0, kScreenHeight], [int(kScreenWidth*.97), 0]]
-sinister_base_boundary = [[0, kScreenHeight], [int(kScreenWidth*.97), kScreenHeight], [int(kScreenWidth*.97), 0]]
-dexter_chief_purpure = FieldSection(dexter_chief_boundary, kPurpure)
-sinister_base_argent = FieldSection(sinister_base_boundary, kArgent)
-per_bend = Device("", [dexter_chief_purpure, sinister_base_argent])
-per_bend.display_device()
-
-sinister_chief_boundary = [[int(kScreenWidth*.03), 0], [kScreenWidth, 0], [kScreenWidth, kScreenHeight]]
-dexter_base_boundary = [[int(kScreenWidth*.03), 0], [int(kScreenWidth*.03), kScreenHeight], [kScreenWidth, kScreenHeight]]
-sinister_chief_purpure = FieldSection(sinister_chief_boundary, kPurpure)
-dexter_base_argent = FieldSection(dexter_base_boundary, kArgent)
-per_bend_sinister = Device("", [sinister_chief_purpure, dexter_base_argent])
-per_bend_sinister.display_device()
 
 dexter_chief_quarter = [[0, 0], [0, int(kScreenHeight*5/12)], [int(kScreenWidth/2), int(kScreenHeight*5/12)], [int(kScreenWidth/2), 0]]
 sinister_chief_quarter = [[int(kScreenWidth/2), 0], [int(kScreenWidth/2), int(kScreenHeight*5/12)], [kScreenWidth, int(kScreenHeight*5/12)], [kScreenWidth, 0]]
