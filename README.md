@@ -27,6 +27,8 @@ TODO: (This is just for the anki deck for now, but it will be helpful when I get
   * Quarterly
   * In canton
   * Per saltire
+  * Vetu
+  * Vetu ploye
   * Per pall
   * Per pall reversed
   * Gyronny 8
@@ -35,6 +37,7 @@ TODO: (This is just for the anki deck for now, but it will be helpful when I get
   * Lozengy
   * Fretty
   * Scaly
+  * Masoned
   * Complex lines of division
     * Assemble sets of points/bezier curves for complex lines
     * Treat a complex line of division as a rectangle with the line through it; colorswap and rotate as necessary
@@ -65,6 +68,8 @@ TODO: (This is just for the anki deck for now, but it will be helpful when I get
   * Mount
   * Pall
   * Pall reversed
+  * Bordure
+  * Orle
   * Cotising
 
 * Geometric charges

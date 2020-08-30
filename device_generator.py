@@ -14,7 +14,6 @@ class Device:
         field_sections: a list of FieldSection objects.
         charge_groups: a list of ChargeGroup objects.
         '''
-        self.Margin = int(kScreenWidth/20)
         self.ShieldCurveTop = int(kScreenHeight/2)
         self.ShieldBottomPoint = int(kScreenHeight*875/1000)
         self.CtrlPt1 = 650
@@ -91,33 +90,3 @@ class FieldSection:
         #TODO decide whether to locate the section on the shield here or in Device
         return return_surface
 
-
-
-
-
-def get_paly_boundaries(n):
-    '''
-    Returns a list of lists of lists which is the boundary boxes 
-      for a paly of n field.
-    n: the number of sections.
-    '''
-    boundary_sections = []
-    for i in range(n):
-        left_edge = int(kScreenWidth*i/n)
-        right_edge = int(kScreenWidth*(i+1)/n)
-        boundary_sections.append(
-            [[left_edge, 0], [left_edge, kScreenHeight],
-             [right_edge, kScreenHeight], [right_edge, 0]])
-    return boundary_sections
-
-def get_paly_field(num_sections, tinctures):
-    '''
-    Returns a Device object with a paly field.
-    num_sections: the number of sections.
-    tinctures: a list of tincture objects, e.g. [kVert, kArgent].
-    '''
-    paly_of_n_fieldsections = []
-    boundaries = get_paly_boundaries(num_sections)
-    for i in range(num_sections):
-        paly_of_n_fieldsections.append(FieldSection(boundaries[i], tinctures[i % len(tinctures)]))
-    return Device("", paly_of_n_fieldsections)

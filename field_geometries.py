@@ -26,17 +26,38 @@ def get_paly_boundaries(n):
              [right_edge, kScreenHeight], [right_edge, 0]])
     return boundary_sections
 
-def get_paly_field(num_sections, tinctures):
+def get_barry_boundaries(n):
     '''
-    Returns a Device object with a paly field.
+    Returns a list of lists of lists which is the boundary boxes 
+      for a barry of n field.
+    n: the number of sections. Use 2 for per fess.
+    '''
+    boundary_sections = []
+    for i in range(n):
+        # 0.9 fudge factor because the bottom margin is so large
+        top_edge = int(kScreenHeight*i/n*0.9+kMargin) 
+        bottom_edge = int(kScreenHeight*(i+1)/n*0.9+kMargin)
+        boundary_sections.append(
+            [[0, top_edge], [kScreenWidth, top_edge],
+             [kScreenWidth, bottom_edge], [0, bottom_edge]])
+    return boundary_sections
+
+def get_striped_field(num_sections, tinctures, direction):
+    '''
+    Returns a Device object with a field whose lines of division 
+      all go a single direction.
     num_sections: the number of sections.
     tinctures: a list of tincture objects, e.g. [kVert, kArgent].
+    direction: a string indicating direction.
+      Must be one of the keys in the dict below.
     '''
-    paly_of_n_fieldsections = []
-    boundaries = get_paly_boundaries(num_sections)
+    directions = {"per pale": get_paly_boundaries, "paly": get_paly_boundaries,
+                  "per fess": get_barry_boundaries, "barry": get_barry_boundaries}
+    fieldsections = []
+    boundaries = directions[direction](num_sections)
     for i in range(num_sections):
-        paly_of_n_fieldsections.append(FieldSection(boundaries[i], tinctures[i % len(tinctures)]))
-    return Device("", paly_of_n_fieldsections)
+        fieldsections.append(FieldSection(boundaries[i], tinctures[i % len(tinctures)]))
+    return Device("", fieldsections)
 
 
 '''
