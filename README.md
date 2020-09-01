@@ -72,6 +72,7 @@ TODO: (This is just for the anki deck for now, but it will be helpful when I get
   * Pall reversed
   * Bordure
   * Orle
+  * Flaunches
   * Cotising
 
 * Geometric charges

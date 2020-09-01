@@ -81,6 +81,11 @@ def get_bendy_sinister_boundaries(n):
     return boundary_sections
 
 def get_chevronelly_boundaries(n):
+    '''
+    Returns a list of lists of lists which is the boundary boxes 
+      for a chevronelly of n field.
+    n: the number of sections. Use 2 for per chevron.
+    '''
     boundary_sections = []
     y_offset = int(kScreenHeight/8)
     for i in range(n):
@@ -93,6 +98,11 @@ def get_chevronelly_boundaries(n):
     return boundary_sections
 
 def get_chevronelly_inverted_boundaries(n):
+    '''
+    Returns a list of lists of lists which is the boundary boxes 
+      for a chevronelly inverted of n field.
+    n: the number of sections. Use 2 for per chevron.
+    '''
     boundary_sections = []
     y_offset = int(kScreenHeight/10)
     for i in range(n):
@@ -103,7 +113,6 @@ def get_chevronelly_inverted_boundaries(n):
                                   [kScreenWidth/2, kScreenHeight*(i+1)/n],
                                   [0, kScreenHeight*(i+1)/n-y_offset]])
     return boundary_sections
-
 
 def get_striped_field(num_sections, tinctures, direction):
     '''
@@ -192,3 +201,36 @@ def get_per_saltire_field(tinctures):
     return Device("", [chief_saltire_section, dexter_saltire_section,
                        base_saltire_section, sinister_saltire_section])
 
+def get_per_chevron_throughout_field(tinctures):
+    '''
+    Returns a Device with a per chevron throughout field.
+    tinctures: a list of exactly two tinctures.
+    '''
+    if len(tinctures) != 2:
+        print ("A per chevron throughout field must have exactly two tinctures.")
+        return Device("")
+    chief_boundary = [[0,0], [0, kScreenHeight], [int(kScreenWidth/2), kMargin],
+                             [kScreenWidth, kScreenHeight], [kScreenWidth, 0]]
+    base_boundary = [[0, kScreenHeight], [int(kScreenWidth/2), kMargin],
+                     [kScreenWidth, kScreenHeight]]
+    chief_section = FieldSection(chief_boundary, tinctures[0])
+    base_section = FieldSection(base_boundary, tinctures[1])
+    return Device("", [chief_section, base_section])
+    
+def get_per_chevron_inverted_throughout_field(tinctures):
+    '''
+    Returns a Device with a per chevron inverted throughout field.
+    tinctures: a list of exactly two tinctures.
+    '''
+    x_margin = int(kScreenWidth/22)
+    if len(tinctures) != 2:
+        print ("A per chevron inverted throughout field must have exactly two tinctures.")
+        return Device("")
+    base_boundary = [[x_margin,0], [x_margin, kScreenHeight],
+                     [kScreenWidth-x_margin, kScreenHeight], [kScreenWidth-x_margin, 0],
+                     [int(kScreenWidth/2),  int(kScreenHeight*0.87)]]
+    chief_boundary = [[x_margin, 0], [int(kScreenWidth/2), int(kScreenHeight*0.87)],
+                     [kScreenWidth-x_margin, 0]]
+    chief_section = FieldSection(chief_boundary, tinctures[0])
+    base_section = FieldSection(base_boundary, tinctures[1])
+    return Device("", [chief_section, base_section])
