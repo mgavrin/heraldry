@@ -80,6 +80,31 @@ def get_bendy_sinister_boundaries(n):
              [kScreenWidth, sinister_base], [kScreenWidth, dexter_base]])
     return boundary_sections
 
+def get_chevronelly_boundaries(n):
+    boundary_sections = []
+    y_offset = int(kScreenHeight/8)
+    for i in range(n):
+        boundary_sections.append([[0, kScreenHeight*i/n],
+                                  [kScreenWidth/2, kScreenHeight*i/n-y_offset],
+                                  [kScreenWidth, kScreenHeight*i/n],
+                                  [kScreenWidth, kScreenHeight*(i+1)/n],
+                                  [kScreenWidth/2, kScreenHeight*(i+1)/n-y_offset],
+                                  [0, kScreenHeight*(i+1)/n]])
+    return boundary_sections
+
+def get_chevronelly_inverted_boundaries(n):
+    boundary_sections = []
+    y_offset = int(kScreenHeight/10)
+    for i in range(n):
+        boundary_sections.append([[0, kScreenHeight*i/n-y_offset],
+                                  [kScreenWidth/2, kScreenHeight*i/n],
+                                  [kScreenWidth, kScreenHeight*i/n-y_offset],
+                                  [kScreenWidth, kScreenHeight*(i+1)/n-y_offset],
+                                  [kScreenWidth/2, kScreenHeight*(i+1)/n],
+                                  [0, kScreenHeight*(i+1)/n-y_offset]])
+    return boundary_sections
+
+
 def get_striped_field(num_sections, tinctures, direction):
     '''
     Returns a Device object with a field whose lines of division 
@@ -93,7 +118,12 @@ def get_striped_field(num_sections, tinctures, direction):
     directions = {"per pale": get_paly_boundaries, "paly": get_paly_boundaries,
                   "per fess": get_barry_boundaries, "barry": get_barry_boundaries,
                   "per bend": get_bendy_boundaries, "bendy": get_bendy_boundaries,
-                  "per bend sinister": get_bendy_sinister_boundaries, "bendy sinister": get_bendy_sinister_boundaries}
+                  "per bend sinister": get_bendy_sinister_boundaries,
+                  "bendy sinister": get_bendy_sinister_boundaries,
+                  "per chevron": get_chevronelly_boundaries,
+                  "chevronelly": get_chevronelly_boundaries,
+                  "per chevron inverted": get_chevronelly_inverted_boundaries,
+                  "chevronelly inverted": get_chevronelly_inverted_boundaries}
     fieldsections = []
     boundaries = directions[direction](num_sections)
     for i in range(num_sections):
@@ -103,7 +133,7 @@ def get_striped_field(num_sections, tinctures, direction):
 def get_quarterly_field(tinctures):
     '''
     Returns a device object with a quarterly field.
-    tinctures: a list of exactly two tinctures.
+    tinctures: a list of exactly two or four tinctures.
     '''
     if len(tinctures) != 2 and len(tinctures) != 4:
         print("Quarterly fields can't have", len(tinctures), "tinctures")
@@ -131,31 +161,34 @@ def get_quarterly_field(tinctures):
     return Device("", [dexter_chief_section, sinister_chief_section,
                        dexter_base_section, sinister_base_section])
 
+def get_per_saltire_field(tinctures):
+    '''
+    Returns a device object with a per saltire field.
+    tinctures: a list of exactly two or four tinctures.
+    '''
+    if len(tinctures) != 2 and len(tinctures) != 4:
+        print("Quarterly fields can't have", len(tinctures), "tinctures")
+        return Device("")
+    chief_saltire_boundary = [[int(kScreenWidth*.03), 0],
+                              [int(kScreenWidth/2), int(kScreenHeight*5/12)],
+                              [int(kScreenWidth*.97), 0]]
+    dexter_saltire_boundary = [[int(kScreenWidth*.03), 0],
+                               [int(kScreenWidth/2), int(kScreenHeight*5/12)],
+                               [int(kScreenWidth*.03), int(kScreenHeight*10/12)]]
+    # There are four points here. Don't mess with this
+    # without looking at it really carefully first.
+    base_saltire_boundary = [[int(kScreenWidth*.03), int(kScreenHeight*10/12)],
+                             [int(kScreenWidth/2), int(kScreenHeight*5/12)],
+                             [int(kScreenWidth*.97), int(kScreenHeight*10/12)],
+                             [int(kScreenWidth/2), kScreenHeight]]
+    sinister_saltire_boundary = [[int(kScreenWidth*.97), 0],
+                                 [int(kScreenWidth/2), int(kScreenHeight*5/12)],
+                                 [int(kScreenWidth*.97), int(kScreenHeight*10/12)]]
+    chief_saltire_section = FieldSection(chief_saltire_boundary, tinctures[0])
+    dexter_saltire_section = FieldSection(dexter_saltire_boundary, tinctures[1])
+    base_saltire_section = FieldSection(base_saltire_boundary, tinctures[2 % len(tinctures)])
+    sinister_saltire_section = FieldSection(sinister_saltire_boundary,
+                                            tinctures[3 % len(tinctures)])
+    return Device("", [chief_saltire_section, dexter_saltire_section,
+                       base_saltire_section, sinister_saltire_section])
 
-'''
-
-dexter_chief_quarter = [[0, 0], [0, int(kScreenHeight*5/12)], [int(kScreenWidth/2), int(kScreenHeight*5/12)], [int(kScreenWidth/2), 0]]
-sinister_chief_quarter = [[int(kScreenWidth/2), 0], [int(kScreenWidth/2), int(kScreenHeight*5/12)], [kScreenWidth, int(kScreenHeight*5/12)], [kScreenWidth, 0]]
-dexter_base_quarter = [[0, int(kScreenHeight*5/12)], [0, kScreenHeight], [int(kScreenWidth/2), kScreenHeight], [int(kScreenWidth/2), int(kScreenHeight*5/12)]]
-sinister_base_quarter = [[int(kScreenWidth/2), int(kScreenHeight*5/12)], [int(kScreenWidth/2), kScreenHeight], [kScreenWidth, kScreenHeight], [kScreenWidth, int(kScreenHeight*5/12)]]
-dexter_chief_gules = FieldSection(dexter_chief_quarter, kGules)
-sinister_chief_argent = FieldSection(sinister_chief_quarter, kArgent)
-dexter_base_argent = FieldSection(dexter_base_quarter, kArgent)
-sinister_base_gules = FieldSection(sinister_base_quarter, kGules)
-quarterly = Device("", [dexter_chief_gules, sinister_chief_argent, dexter_base_argent, sinister_base_gules])
-quarterly.display_device()
-chief_saltire_boundary = [[int(kScreenWidth*.03), 0], [int(kScreenWidth/2), int(kScreenHeight*5/12)], [int(kScreenWidth*.97), 0]]
-dexter_saltire_boundary = [[int(kScreenWidth*.03), 0], [int(kScreenWidth/2), int(kScreenHeight*5/12)], [int(kScreenWidth*.03), int(kScreenHeight*10/12)]]
-# There are four points here. Don't mess with this without looking at it really carefully first.
-base_saltire_boundary = [[int(kScreenWidth*.03), int(kScreenHeight*10/12)], [int(kScreenWidth/2), int(kScreenHeight*5/12)], [int(kScreenWidth*.97), int(kScreenHeight*10/12)], [int(kScreenWidth/2), kScreenHeight]]
-sinister_saltire_boundary = [[int(kScreenWidth*.97), 0], [int(kScreenWidth/2), int(kScreenHeight*5/12)], [int(kScreenWidth*.97), int(kScreenHeight*10/12)]]
-chief_saltire_section = FieldSection(chief_saltire_boundary, kArgent)
-dexter_saltire_section = FieldSection(dexter_saltire_boundary, kPurpure)
-base_saltire_section = FieldSection(base_saltire_boundary, kArgent)
-sinister_saltire_section = FieldSection(sinister_saltire_boundary, kPurpure)
-per_saltire = Device("", [chief_saltire_section, dexter_saltire_section, base_saltire_section, sinister_saltire_section])
-per_saltire.display_device()
-    
-paly_5 = get_paly_field(7, [kVert, kArgent, kAzure])
-paly_5.display_device()
-'''
