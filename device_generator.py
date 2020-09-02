@@ -65,6 +65,8 @@ class Device:
         while True:
             events=pygame.event.get()
             for event in events:
+                if event.type == MOUSEBUTTONDOWN:
+                    print(pygame.mouse.get_pos())
                 if event.type==QUIT:
                     pygame.display.quit()
                     return

@@ -119,7 +119,7 @@ def get_striped_field(num_sections, tinctures, direction):
     Returns a Device object with a field whose lines of division 
       all go a single direction.
     num_sections: the number of sections.
-    tinctures: a list of tincture objects, e.g. [kVert, kArgent].
+    tinctures: a list of tincture objects, e.g. [kVert, kArgent], dexter chief first.
     direction: a string indicating direction.
       Must be one of the keys in the dict below.
     '''
@@ -142,7 +142,11 @@ def get_striped_field(num_sections, tinctures, direction):
 def get_quarterly_field(tinctures):
     '''
     Returns a device object with a quarterly field.
-    tinctures: a list of exactly two or four tinctures.
+    tinctures: a list of exactly two or four tinctures. Two is recommended.
+      If two, the dexter chief and sinister base quarters are the 0th tincture,
+      and the sinister chief and dexter base quarters are the 1st tincture.
+      If four, the tinctures are used in the order
+      [dexter chief, sinister chief, sinister base, dexter base].
     '''
     if len(tinctures) != 2 and len(tinctures) != 4:
         print("Quarterly fields can't have", len(tinctures), "tinctures")
@@ -173,7 +177,11 @@ def get_quarterly_field(tinctures):
 def get_per_saltire_field(tinctures):
     '''
     Returns a device object with a per saltire field.
-    tinctures: a list of exactly two or four tinctures.
+    tinctures: a list of exactly two or four tinctures. Two is recommended.
+      If two, the chief and base sections are the 0th tincture and the
+      dexter and sinister sections are the 1st tincture.
+      If four, the tinctures are used anticlockwise from chief:
+      [chief, dexter, base, sinister].
     '''
     if len(tinctures) != 2 and len(tinctures) != 4:
         print("Quarterly fields can't have", len(tinctures), "tinctures")
@@ -205,6 +213,8 @@ def get_per_chevron_throughout_field(tinctures):
     '''
     Returns a Device with a per chevron throughout field.
     tinctures: a list of exactly two tinctures.
+      The outer sections are the 0th tincture and the inner section
+      is the 1st tincture.
     '''
     if len(tinctures) != 2:
         print ("A per chevron throughout field must have exactly two tinctures.")
@@ -221,6 +231,8 @@ def get_per_chevron_inverted_throughout_field(tinctures):
     '''
     Returns a Device with a per chevron inverted throughout field.
     tinctures: a list of exactly two tinctures.
+      The middle section is the 0th tincture and the outer sections
+      are the 1st tincture.
     '''
     x_margin = int(kScreenWidth/22)
     if len(tinctures) != 2:
@@ -234,3 +246,28 @@ def get_per_chevron_inverted_throughout_field(tinctures):
     chief_section = FieldSection(chief_boundary, tinctures[0])
     base_section = FieldSection(base_boundary, tinctures[1])
     return Device("", [chief_section, base_section])
+
+def get_vetu_field(tinctures):
+    '''
+    Returns a Device with a vetu field.
+    tinctures: a list of exactly two tinctures.
+      The outer sections are the 0th tincture, and the inner
+      lozenge is the 1st tincture.
+   '''
+    x_margin = 75
+    y_margin = int(kScreenHeight/23)
+    shield_bottom = int(kScreenHeight*0.87)
+    y_midpoint = int((y_margin + shield_bottom)/2)
+    if len(tinctures) != 2:
+        print ("A vetu field must have exactly two tinctures.")
+        return Device("")
+    # Just do the whole field and then stick the lozenge on top of it.
+    outer_boundary = [[0, 0], [0, kScreenHeight],
+                     [kScreenWidth, kScreenHeight], [kScreenWidth, 0]]
+    inner_boundary = [[int(kScreenWidth/2), y_margin],
+                      [kScreenWidth-x_margin, y_midpoint],
+                      [int(kScreenWidth/2), shield_bottom],
+                      [x_margin, y_midpoint]]
+    outer_section = FieldSection(outer_boundary, tinctures[0])
+    inner_section = FieldSection(inner_boundary, tinctures[1])
+    return Device("", [outer_section, inner_section])

@@ -1,48 +1,44 @@
-# heraldry
 Resources for generating SCA armory art.
 
 Known issues: Sometimes the tincture in the dexter chief corner is not the first one in the list passed in. Change the order of the list as a workaround.
 
-TODO: (This is just for the anki deck for now, but it will be helpful when I get to more complex stuff later.)
-
-* Acquire art assets
-  * Lion (for quadruped postures)
-  * Bird (for bird postures)
-  * Crescent
-  * Mullet
-  * Pheon
-  * Estoile
-  * Ermine
-  * Vair
-  * Figure out how to go through an image pixel by pixel and swap colors,
-    so you can have arbitrary tinctures of ermine and vair and arbitrary tinctures around a complex line
-
 * Field divisions
-  * Per pale
-  * Per fess
-  * Paly
-  * Barry
-  * Per bend
-  * Per bend sinister
-  * Per chevron
-  * Per chevron throughout
-  * Quarterly
-  * In canton
-  * Per saltire
-  * Vetu
-  * Vetu ploye
-  * Per pall
-  * Per pall reversed
-  * Gyronny 8
-  * Gyronny 10
-  * Checky
-  * Lozengy
-  * Fretty
-  * Scaly
-  * Masoned
-  * Complex lines of division
-    * Assemble sets of points/bezier curves for complex lines
-    * Treat a complex line of division as a rectangle with the line through it; colorswap and rotate as necessary
+  * Supported:
+    * Per pale
+    * Per fess
+    * Paly
+    * Barry
+    * Per bend
+    * Per bend sinister
+    * Bendy
+    * Bendy sinister
+    * Per chevron
+    * Chevronelly
+    * Per chevron inverted
+    * Chevronelly inverted
+    * Per chevron throughout
+    * Per chevron inverted througout
+    * Quarterly
+    * In canton
+    * Per saltire
+    * Vetu
+  * TODO:
+    * Vetu ploye
+    * Per pall
+    * Per pall reversed
+    * Gyronny 8
+    * Gyronny 10
+    * Checky
+    * Lozengy
+    * Fretty
+    * Scaly
+    * Masoned
+
+* Complex lines of division
+  * Assemble sets of points/curves for complex lines
+  * Treat a complex line of division as a rectangle with the line through it; colorswap and rotate as necessary
+  * Supported:
+  * TODO:
     * Indented
     * Rayonny
     * Embattled
@@ -54,10 +50,24 @@ TODO: (This is just for the anki deck for now, but it will be helpful when I get
     * Nebuly
     * Engrailed (points go out/down/sinister)
     * Invected (points go in/up/dexter))
+    * Dancetty
+    * Enarched/Ploye
+    * Flory-counterflory
+    * Indented fleury at the points
+    * Lozengy
+    * Potenty
+    * Raguly
+    * Urdy
+    * Enarched
+    * Bevilled ([per] bend [sinister] only)
+    * Denticulada (bordures only)
+    * Right step/left step (per fess only)
+    * Rompu (chevron only)
+    * Triangular (chief only)
+    * Engouled (bend [sinister] only)
 
 * Ordinaries
   * Pale
-  * Endorsed
   * Pallet
   * Fess
   * Bar
@@ -71,9 +81,17 @@ TODO: (This is just for the anki deck for now, but it will be helpful when I get
   * Pall
   * Pall reversed
   * Bordure
+  * Base
+  * Point pointed
+  * Quarter
+  * Canton
+  * Gyron
   * Orle
+  * Double tressure
+  * Tierce
   * Flaunches
-  * Cotising
+  * Cotised
+  * Endorsed  
 
 * Geometric charges
   * Roundel
@@ -143,3 +161,23 @@ TODO: (This is just for the anki deck for now, but it will be helpful when I get
 * Other stuff
   * Voided
   * Fimbriated
+
+* UI
+  * tkinter file picker for charges
+  * color picker
+    * recolor everything that isn't black (outlines)
+    * if the selected color is sable, swap black to white
+  * drag and drop to move charges around the field
+  * resize charges with corner arrows
+
+* Acquire art assets
+  * Lion (for quadruped postures)
+  * Bird (for bird postures)
+  * Crescent
+  * Mullet
+  * Pheon
+  * Estoile
+  * Ermine
+  * Vair
+  * Figure out how to go through an image pixel by pixel and swap colors,
+    so you can have arbitrary tinctures of ermine and vair and arbitrary tinctures around a complex line
