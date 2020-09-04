@@ -77,6 +77,7 @@ TODO: type hints
   * Bend sinister
   * Bendlet
   * Chief
+    * Also support as "label"
   * Chevron
   * Chevronel
   * Mount

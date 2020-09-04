@@ -2,6 +2,8 @@ import field_geometries
 
 constant_definitions =open("constants.py")
 exec(constant_definitions.read())
+
+'''
 # Plain field
 field_geometries.get_plain_field(kPurpure).display_device()
 # Two-color parallel sections
@@ -29,3 +31,7 @@ field_geometries.get_per_chevron_inverted_throughout_field([kArgent, kPurpure]).
 # Vetu
 field_geometries.get_vetu_field([kArgent, kPurpure]).display_device()
 field_geometries.get_vetu_ploye_field([kArgent, kPurpure]).display_device()
+# Per pall (and inverted)
+'''
+field_geometries.get_per_pall_field([kArgent, kPurpure, kAzure]).display_device()
+field_geometries.get_per_pall_reversed_field([kPurpure, kAzure, kArgent]).display_device()

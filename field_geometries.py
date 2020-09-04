@@ -314,3 +314,34 @@ def get_vetu_ploye_field(tinctures):
     return Device("", [inner_section, dexter_chief_section, sinister_chief_section,
                        dexter_base_section, sinister_base_section])
 
+def get_per_pall_field(tinctures):
+    '''
+    Returns a device with a per pall field.
+    tinctures: a list of exactly 3 tinctures,
+     which will be used in the order [chief, dexter, sinister].
+    '''
+    center = [int(kScreenWidth/2), int(kScreenHeight*0.3)]
+    chief_boundary = [[0, 0], [kScreenWidth, 0], center]
+    dexter_boundary = [[0, 0], [0, kScreenHeight], [int(kScreenWidth/2), kScreenHeight], center]
+    sinister_boundary = [[kScreenWidth, 0], [kScreenWidth, kScreenHeight],
+                         [int(kScreenWidth/2), kScreenHeight], center]
+    chief_section = FieldSection(chief_boundary, tincture=tinctures[0])
+    dexter_section = FieldSection(dexter_boundary, tincture=tinctures[1])
+    sinister_section = FieldSection(sinister_boundary, tincture=tinctures[2])
+    return Device("", [chief_section, dexter_section, sinister_section])
+
+def get_per_pall_reversed_field(tinctures):
+    '''
+    Returns a device with a per pall reversed field.
+    tinctures: a list of exactly 3 tinctures,
+     which will be used in the order [dexter, sinister, base].
+    '''
+    center = [int(kScreenWidth/2), int(kScreenHeight*0.5)]
+    base_boundary = [[0, kScreenHeight], [kScreenWidth, kScreenHeight], center]
+    dexter_boundary = [[0, 0], [0, kScreenHeight], center, [int(kScreenWidth/2), 0]]
+    sinister_boundary = [[kScreenWidth, 0], [kScreenWidth, kScreenHeight],
+                         center, [int(kScreenWidth/2), 0]]
+    dexter_section = FieldSection(dexter_boundary, tincture=tinctures[0])
+    sinister_section = FieldSection(sinister_boundary, tincture=tinctures[1])
+    base_section = FieldSection(base_boundary, tincture=tinctures[2])
+    return Device("", [dexter_section, sinister_section, base_section])
