@@ -1,6 +1,8 @@
 Resources for generating SCA armory art.
 
-Known issues: Sometimes the tincture in the dexter chief corner is not the first one in the list passed in. Change the order of the list as a workaround.
+Known issues: Sometimes for multiply striped fields (barry, chevronelly, etc) the tincture in the dexter chief corner is not the first one in the list passed in. Change the order of the list as a workaround.
+
+TODO: type hints
 
 * Field divisions
   * Supported:
@@ -22,8 +24,8 @@ Known issues: Sometimes the tincture in the dexter chief corner is not the first
     * In canton
     * Per saltire
     * Vetu
-  * TODO:
     * Vetu ploye
+  * TODO:
     * Per pall
     * Per pall reversed
     * Gyronny 8

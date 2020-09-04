@@ -32,7 +32,8 @@ class Device:
             print("Error: at least one field division is required. It can be just a plain tincture.")
 
         if blazon != "":
-            #TODO unfake this
+            #TODO implement blazon parsing
+            print ("Sorry, blazon parsing isn't supported yet.")
             self.field_sections = []
             self.charge_groups = []
         else:
@@ -72,25 +73,38 @@ class Device:
                     return
 
 class FieldSection:
-    def __init__(self, boundary_points, tincture = None, fur = None):
+    def __init__(self, boundary_points = [], ellipse = None, tincture = None, fur = None):
         '''
-        boundary_points: coordinates of the vertices of the field division on the full screen
+        boundary_points: list of lists of the form [[x,y], [x,y] ...]
+         indicating coordinates of the vertices of the field division on the full screen.
+         Used for field sections with straight edges.
+        ellipse: a Rect object indicating the location and shape of the field division
+         on the full screen. Used for field sections with curved edges.
         tincture: kAzure or kGules or similar
         fur: a Fur object
-        Do not set both tincture and fur. Possibly I will change my mind about this structure when I implement barry/pally/etc.
+        Do not set both tincture and fur.
+        Possibly I will change my mind about this structure when I implement furs.
         '''
         self.boundary = boundary_points
+        self.ellipse = ellipse
         self.tincture = tincture
         self.fur = fur
         if tincture != None and fur != None:
             print("Do not attempt to put a tincture and a fur on the same part of the field.")
 
     def draw_field_section(self):
-        return_surface = pygame.Surface((kScreenWidth, kScreenHeight), pygame.SRCALPHA) #SRCALPHA ensures surface initializes transparent
-        if self.tincture:
-            pygame.draw.polygon(return_surface, self.tincture, self.boundary)
-        else:
-            pass #handle furs once you have a Fur class
-        #TODO decide whether to locate the section on the shield here or in Device
+        return_surface = pygame.Surface((kScreenWidth, kScreenHeight), pygame.SRCALPHA)
+        #SRCALPHA ensures surface initializes transparent
+        if self.boundary != []:
+            if self.tincture:
+                pygame.draw.polygon(return_surface, self.tincture, self.boundary)
+            else:
+                pass #handle furs once you have a Fur class
+        elif self.ellipse != None:
+            if self.tincture:
+                pygame.draw.ellipse(return_surface, self.tincture, self.ellipse)
+            else:
+                pass #handle furs once you have a Fur class
+            
         return return_surface
 
