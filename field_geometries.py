@@ -320,6 +320,9 @@ def get_per_pall_field(tinctures):
     tinctures: a list of exactly 3 tinctures,
      which will be used in the order [chief, dexter, sinister].
     '''
+    if len(tinctures) != 3:
+        print("A per pall field must have exactly 3 tinctures.")
+        return Device("")
     center = [int(kScreenWidth/2), int(kScreenHeight*0.3)]
     chief_boundary = [[0, 0], [kScreenWidth, 0], center]
     dexter_boundary = [[0, 0], [0, kScreenHeight], [int(kScreenWidth/2), kScreenHeight], center]
@@ -336,6 +339,9 @@ def get_per_pall_reversed_field(tinctures):
     tinctures: a list of exactly 3 tinctures,
      which will be used in the order [dexter, sinister, base].
     '''
+    if len(tinctures) != 3:
+        print("A per pall reversed field must have exactly 3 tinctures.")
+        return Device("")
     center = [int(kScreenWidth/2), int(kScreenHeight*0.5)]
     base_boundary = [[0, kScreenHeight], [kScreenWidth, kScreenHeight], center]
     dexter_boundary = [[0, 0], [0, kScreenHeight], center, [int(kScreenWidth/2), 0]]
@@ -345,3 +351,52 @@ def get_per_pall_reversed_field(tinctures):
     sinister_section = FieldSection(sinister_boundary, tincture=tinctures[1])
     base_section = FieldSection(base_boundary, tincture=tinctures[2])
     return Device("", [dexter_section, sinister_section, base_section])
+
+def get_gyronny_field(num_sections, tinctures, horizontal=False):
+    '''
+    Returns a Device with a gyronny field of num_sections sections.
+    num_sections: the number of sections. 6, 8, 10, and 12 are supported.
+     4 is just quarterly or per saltire. 
+    tinctures: A list of exactly two tinctures; the first one 
+     will be used in the dexter chief corner.
+    horizontal: For gyronny of 6 or 10,
+     if it is set to False, there will be a vertical line of division but no
+     horizontal one. If it is set to True, there will be a horizontal line of division but no vertical one. This variable has no effect on gyronny of 8 or 12 because they have both horizontal and vertical lines of division.
+    '''
+    #TODO rotate outer_points until the dexter chief one is 0th
+    if num_sections not in [6,8,10,12]:
+        # Don't make me do trig for your crimes. Do your own crimes.
+        print("A gyronny field must have 6, 8, 10, or 12 sections.")
+        return Device("")
+    if len(tinctures) != 2:
+        print("A gyronny field must have exactly 2 tinctures.")
+        return Device("")
+    
+    center = [int(kScreenWidth/2), int(kScreenHeight*0.4)]
+    boundaries = []
+    if num_sections == 6:
+        if not horizontal:
+            outer_points = [[int(kScreenWidth/2), -kScreenHeight],
+                            [kScreenWidth, int(kScreenHeight/6)],
+                            [kScreenWidth, int(kScreenHeight*2/3)],
+                            [int(kScreenWidth/2), kScreenHeight],
+                            [0, int(kScreenHeight*2/3)],
+                            [0, int(kScreenHeight/6)]]
+        else:
+            outer_points = [[2*kScreenWidth, int(kScreenHeight*0.4)],
+                            [int(kScreenWidth*5/6), kScreenHeight],
+                            [int(kScreenWidth*1/6), kScreenHeight],
+                            [-kScreenWidth, int(kScreenHeight*0.4)],
+                            [int(kScreenWidth*1/6), int(-kScreenHeight*0.2)],
+                            [int(kScreenWidth*5/6), int(-kScreenHeight*0.2)]]
+        for i in range(num_sections):
+            boundaries.append([center, outer_points[i], outer_points[(i+1) % num_sections]])
+            
+    else:
+        print ("Unsupported number of sections:", num_sections)
+        return Device("")
+    sections = []
+    for i in range(num_sections):
+        sections.append(FieldSection(boundaries[i], tincture=tinctures[i%2]))
+    print(str(sections[0]))
+    return Device("", sections)

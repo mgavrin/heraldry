@@ -25,9 +25,9 @@ TODO: type hints
     * Per saltire
     * Vetu
     * Vetu ploye
-  * TODO:
     * Per pall
     * Per pall reversed
+  * TODO:
     * Gyronny 8
     * Gyronny 10
     * Checky

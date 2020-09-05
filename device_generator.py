@@ -56,7 +56,7 @@ class Device:
             #charge.draw_charge()
         # Add the shield outline
         shield_mask = pygame.transform.scale(
-            pygame.image.load(os.path.join("art", "shield mask.png")),
+            pygame.image.load(os.path.join("art", "shield mask vector.png")),
             (kScreenWidth, kScreenHeight))
         self.screen.blit(shield_mask, [0,0])
 
@@ -91,6 +91,9 @@ class FieldSection:
         self.fur = fur
         if tincture != None and fur != None:
             print("Do not attempt to put a tincture and a fur on the same part of the field.")
+
+    def __str__(self):
+        return "FieldSection: boundary = " + str(self.boundary) + ", tincture = " + str(self.tincture )
 
     def draw_field_section(self):
         return_surface = pygame.Surface((kScreenWidth, kScreenHeight), pygame.SRCALPHA)
