@@ -27,14 +27,18 @@ TODO: type hints
     * Vetu ploye
     * Per pall
     * Per pall reversed
-  * TODO:
+    * Gyronny 6
     * Gyronny 8
     * Gyronny 10
+    * Gyronny 12
+  * TODO:
     * Checky
     * Lozengy
     * Fretty
     * Scaly
     * Masoned
+    * Party of 6
+    * Gyronny arrondy
 
 * Complex lines of division
   * Assemble sets of points/curves for complex lines

@@ -34,12 +34,11 @@ field_geometries.get_vetu_ploye_field([kArgent, kPurpure]).display_device()
 # Per pall (and inverted)
 field_geometries.get_per_pall_field([kArgent, kPurpure, kAzure]).display_device()
 field_geometries.get_per_pall_reversed_field([kPurpure, kAzure, kArgent]).display_device()
-'''
 # Gyronny
 field_geometries.get_gyronny_field(6, [kPurpure, kArgent]).display_device()
 field_geometries.get_gyronny_field(6, [kPurpure, kArgent], horizontal=True).display_device()
-'''
 field_geometries.get_gyronny_field(8, [kPurpure, kArgent]).display_device()
 field_geometries.get_gyronny_field(10, [kPurpure, kArgent]).display_device()
+field_geometries.get_gyronny_field(10, [kPurpure, kArgent], horizontal=True).display_device()
 field_geometries.get_gyronny_field(12, [kPurpure, kArgent]).display_device()
 '''

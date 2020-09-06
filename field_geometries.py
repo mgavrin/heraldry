@@ -1,3 +1,4 @@
+import math
 from device_generator import *
 constant_definitions =open("constants.py")
 exec(constant_definitions.read())
@@ -361,11 +362,10 @@ def get_gyronny_field(num_sections, tinctures, horizontal=False):
      will be used in the dexter chief corner.
     horizontal: For gyronny of 6 or 10,
      if it is set to False, there will be a vertical line of division but no
-     horizontal one. If it is set to True, there will be a horizontal line of division but no vertical one. This variable has no effect on gyronny of 8 or 12 because they have both horizontal and vertical lines of division.
+     horizontal one. If it is set to True, there will be a horizontal line of division but no vertical one. 
+     This variable has no effect on gyronny of 8 or 12 because they have both horizontal and vertical lines of division.
     '''
-    #TODO rotate outer_points until the dexter chief one is 0th
     if num_sections not in [6,8,10,12]:
-        # Don't make me do trig for your crimes. Do your own crimes.
         print("A gyronny field must have 6, 8, 10, or 12 sections.")
         return Device("")
     if len(tinctures) != 2:
@@ -373,30 +373,18 @@ def get_gyronny_field(num_sections, tinctures, horizontal=False):
         return Device("")
     
     center = [int(kScreenWidth/2), int(kScreenHeight*0.4)]
-    boundaries = []
-    if num_sections == 6:
-        if not horizontal:
-            outer_points = [[int(kScreenWidth/2), -kScreenHeight],
-                            [kScreenWidth, int(kScreenHeight/6)],
-                            [kScreenWidth, int(kScreenHeight*2/3)],
-                            [int(kScreenWidth/2), kScreenHeight],
-                            [0, int(kScreenHeight*2/3)],
-                            [0, int(kScreenHeight/6)]]
-        else:
-            outer_points = [[2*kScreenWidth, int(kScreenHeight*0.4)],
-                            [int(kScreenWidth*5/6), kScreenHeight],
-                            [int(kScreenWidth*1/6), kScreenHeight],
-                            [-kScreenWidth, int(kScreenHeight*0.4)],
-                            [int(kScreenWidth*1/6), int(-kScreenHeight*0.2)],
-                            [int(kScreenWidth*5/6), int(-kScreenHeight*0.2)]]
-        for i in range(num_sections):
-            boundaries.append([center, outer_points[i], outer_points[(i+1) % num_sections]])
-            
+    arc_width_radians = 2*math.pi/num_sections
+    if num_sections in (8, 12) or not horizontal:
+        thetas = [i*arc_width_radians - math.pi*0.5 for i in range(num_sections)]
     else:
-        print ("Unsupported number of sections:", num_sections)
-        return Device("")
+        thetas = [(i+0.5)*arc_width_radians - math.pi*0.5 for i in range(num_sections)]
+    x_points = [max(kScreenWidth, kScreenHeight)*math.cos(theta) for theta in thetas]
+    y_points = [max(kScreenWidth, kScreenHeight)*math.sin(theta) for theta in thetas]
     sections = []
     for i in range(num_sections):
-        sections.append(FieldSection(boundaries[i], tincture=tinctures[i%2]))
-    print(str(sections[0]))
+        boundary = [center,
+                    [int(x_points[i]+center[0]), int(y_points[i]+center[1])],
+                    [int(x_points[(i+1) % num_sections]+center[0]),
+                     int(y_points[(i+1) % num_sections]+center[1])]]
+        sections.append(FieldSection(boundary, tincture=tinctures[(i+1) % len(tinctures)]))
     return Device("", sections)
