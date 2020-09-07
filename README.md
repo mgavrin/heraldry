@@ -31,9 +31,9 @@ TODO: type hints
     * Gyronny 8
     * Gyronny 10
     * Gyronny 12
-  * TODO:
     * Checky
     * Lozengy
+  * TODO:
     * Fretty
     * Scaly
     * Masoned

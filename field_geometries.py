@@ -38,8 +38,8 @@ def get_barry_boundaries(n):
         # fudge factor because the bottom margin is so large
         # +kMargin means the first tincture will always be visible first
         fudge_factor = 0.85
-        top_edge = int(kScreenHeight*i/n*fudge_factor+kMargin) 
-        bottom_edge = int(kScreenHeight*(i+1)/n*fudge_factor+kMargin)
+        top_edge = int(kScreenHeight*i/n*fudge_factor+kYMargin) 
+        bottom_edge = int(kScreenHeight*(i+1)/n*fudge_factor+kYMargin)
         boundary_sections.append(
             [[0, top_edge], [kScreenWidth, top_edge],
              [kScreenWidth, bottom_edge], [0, bottom_edge]])
@@ -224,9 +224,9 @@ def get_per_chevron_throughout_field(tinctures):
     if len(tinctures) != 2:
         print ("A per chevron throughout field must have exactly two tinctures.")
         return Device("")
-    chief_boundary = [[0,0], [0, kScreenHeight], [int(kScreenWidth/2), kMargin],
+    chief_boundary = [[0,0], [0, kScreenHeight], [int(kScreenWidth/2), kYMargin],
                              [kScreenWidth, kScreenHeight], [kScreenWidth, 0]]
-    base_boundary = [[0, kScreenHeight], [int(kScreenWidth/2), kMargin],
+    base_boundary = [[0, kScreenHeight], [int(kScreenWidth/2), kYMargin],
                      [kScreenWidth, kScreenHeight]]
     chief_section = FieldSection(chief_boundary, tincture = tinctures[0])
     base_section = FieldSection(base_boundary, tincture = tinctures[1])
@@ -388,3 +388,74 @@ def get_gyronny_field(num_sections, tinctures, horizontal=False):
                      int(y_points[(i+1) % num_sections]+center[1])]]
         sections.append(FieldSection(boundary, tincture=tinctures[(i+1) % len(tinctures)]))
     return Device("", sections)
+
+def get_checky_field(num_sections, tinctures):
+    '''
+    Returns a Device with a checky field.
+    num_sections: the number of individual boxes across the top of the shield.
+     This is distinct from the total number of boxes on the shield and may be less
+     than the number of boxes in the longest vertical column.
+    tinctures: A list of exactly two tinctures; the first one 
+     will be used in the dexter chief corner.
+    '''
+    if len(tinctures) != 2:
+        print("A checky field must have exactly 2 tinctures.")
+        return Device("")
+    side_length = int((kScreenWidth-2*kXMargin)/num_sections)
+    if side_length < 30:
+        print("Warning: that many sections won't work well on this size of screen. Consider using fewer.")
+    sections = []
+    cur_x = kXMargin
+    cur_y = kYMargin
+    cur_tincture = 0
+    next_row_start_tincture = 1
+    while True:
+        boundary = [[cur_x, cur_y], [cur_x, cur_y + side_length],
+                    [cur_x + side_length, cur_y + side_length], [cur_x + side_length, cur_y]]
+        sections.append(FieldSection(boundary, tincture=tinctures[cur_tincture]))
+        cur_x += side_length
+        cur_tincture = (cur_tincture+1) % 2
+        if cur_x > kScreenWidth - kXMargin + side_length:
+            cur_x = kXMargin
+            cur_y += side_length
+            cur_tincture = next_row_start_tincture
+            next_row_start_tincture = (next_row_start_tincture + 1) % 2
+        if cur_y >= kScreenHeight:
+            return Device("", sections)
+            
+def get_lozengy_field(num_sections, tinctures, proportion = 2):
+    '''
+    Returns a Device with a lozengy field.
+    num_sections: the number of individual lozenges across the top of the shield.
+     This is distinct from the total number of lozenges on the shield,
+    tinctures: A list of exactly two tinctures; the first one 
+     will be used in the initial row of bottom-halves.
+    proportion: the ratio of the lozenge height to the lozenge width. The default is 2,
+     for lozenges twice as tall as they are wide. Proportions < 1 may not look very good.
+    '''
+    if len(tinctures) != 2:
+        print("A lozengy field must have exactly 2 tinctures.")
+        return Device("")
+    width = int((kScreenWidth-2*kXMargin)/num_sections)
+    height = int(width * proportion)
+    if width < 30 or height < 30:
+        print("Warning: that many sections won't work well on this size of screen. Consider using fewer.")
+    sections = []
+    # [left, top, right, bottom]
+    start_x_points = [kXMargin, kXMargin + int(width/2), kXMargin + width, kXMargin + int(width/2)]
+    x_points = list(start_x_points)
+    y_points =[kYMargin, kYMargin - int(height/2), kYMargin, kYMargin + int(height/2)]
+    cur_tincture = 0
+    while True:
+        boundary = [[x_points[i], y_points[i]] for i in range(4)]
+        sections.append(FieldSection(boundary, tincture=tinctures[cur_tincture]))
+        x_points = [x + width for x in x_points]
+        if x_points[0] >= (kScreenWidth - kXMargin):
+            x_points = start_x_points
+            # use the tincture to keep track of the offset between rows
+            if cur_tincture == 0:
+                x_points = [int(x - width/2) for x in x_points]
+            y_points = [int(y + height/2) for y in y_points]
+            cur_tincture = (cur_tincture + 1) % 2
+            if y_points[1] >= kScreenHeight:
+                return Device("", sections)
