@@ -34,6 +34,7 @@ TODO: type hints
     * Checky
     * Lozengy
   * TODO:
+    * striped, checky, lozengy, any others as partial fields for e.g. "quarterly argent and checky azure and or"
     * Fretty
     * Scaly
     * Masoned

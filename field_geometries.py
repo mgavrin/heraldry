@@ -3,25 +3,33 @@ from device_generator import *
 constant_definitions =open("constants.py")
 exec(constant_definitions.read())
 
-def get_plain_field(tincture):
+def get_plain_field(tincture, location):
     '''
-    Returns a Device with a field of a single tincture.
+    Returns a FieldSection with a single tincture.
     tincture: the tincture in question, as a tuple of 
       three integers representing RGB values.
+    location: a Rect representing the location of the FieldSection on the screen.
+     If the plain field should fill the entire shield, the Rect should be 
+     Rect(kXMargin, kYMargin, kScreenWidth, kScreenHeight).
     '''
-    boundary = [[0, 0], [0, kScreenHeight], [kScreenWidth, kScreenHeight], [kScreenWidth, 0]]
-    return Device("", [FieldSection(boundary, tincture = tincture)])
+    boundary = [[location.left, location.top], [location.left, location.bottom],
+                [location.right, location.bottom], [location.right, location.top]]
+    return FieldSection(boundary, tincture = tincture)
 
-def get_paly_boundaries(n):
+def get_paly_boundaries(num_sections, location):
     '''
     Returns a list of lists of lists which is the boundary boxes 
       for a paly of n field.
-    n: the number of sections. Use 2 for per pale.
+    num_sections: the number of sections. Use 2 for per pale.
+    location: a Rect representing the location on the screen of the paly portion of the field.
+     If the paly field should fill the entire shield, the Rect should be 
+     Rect(kXMargin, kYMargin, kScreenWidth, kScreenHeight).
     '''
+    #TODO start here, replace constants with left/right/top/bottom/etc
     boundary_sections = []
-    for i in range(n):
-        left_edge = int(kScreenWidth*i/n)
-        right_edge = int(kScreenWidth*(i+1)/n)
+    for i in range(num_sections):
+        left_edge = int(kScreenWidth*i/num_sections)
+        right_edge = int(kScreenWidth*(i+1)/num_sections)
         boundary_sections.append(
             [[left_edge, 0], [left_edge, kScreenHeight],
              [right_edge, kScreenHeight], [right_edge, 0]])
