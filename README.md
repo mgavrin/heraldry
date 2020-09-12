@@ -2,7 +2,10 @@ Resources for generating SCA armory art.
 
 Known issues: Sometimes for multiply striped fields (barry, chevronelly, etc) the tincture in the dexter chief corner is not the first one in the list passed in. Change the order of the list as a workaround.
 
-TODO: type hints
+TODO:
+* type hints
+* create a bunch of masks at full screen size and scale them to fit
+* default location value of full_shield?
 
 * Field divisions
   * Supported:

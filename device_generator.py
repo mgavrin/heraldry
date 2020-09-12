@@ -14,17 +14,10 @@ class Device:
         field_sections: a list of FieldSection objects.
         charge_groups: a list of ChargeGroup objects.
         '''
-        self.LeftMargin = 70
-        self.TopMargin = 42
-        self.ShieldCurveTop = int(kScreenHeight/2)
-        self.ShieldBottomPoint = int(kScreenHeight*875/1000)
-        self.CtrlPt1 = 650
-        self.CtrlPt2X = 425
-        self.CtrlPt2Y = 880
 
         size = (kScreenWidth, kScreenHeight)
         self.screen = pygame.display.set_mode(size, 0, 32)
-        self.screen.fill((176,176,176))
+        self.screen.fill(kGrey)
 
         if blazon and (field_sections or charge_groups):
             print("Error: cannot use both blazon and manual field/charges.")
@@ -48,9 +41,13 @@ class Device:
         (which can be a single charge, a set of the same or different charges, or a charge with tertiary charges on it).
         '''
         for section in self.field_sections:
-            field_section_surface = section.draw_field_section()
-            # Blit at [0,0] because positioning is handled in the FieldSection object
-            self.screen.blit(field_section_surface, [0, 0])
+            section.surface.lock
+            section.mask.lock
+            for x in range(kScreenWidth):
+                for y in range(kScreenHeight):
+                    if section.mask.get_at((x,y)) == kGrey:
+                        self.screen.set_at((x,y), section.surface.get_at((x,y)))
+            #self.screen.blit(field_section.surface, field_section.blit_location)
         for charge in self.charge_groups:
             pass
             #charge.draw_charge()
@@ -73,28 +70,31 @@ class Device:
                     return
 
 class FieldSection:
-    def __init__(self, boundary_points = [], ellipse = None, tincture = None, fur = None):
+    def __init__(self, surface, mask):
         '''
-        boundary_points: list of lists of the form [[x,y], [x,y] ...]
-         indicating coordinates of the vertices of the field division on the full screen.
-         Used for field sections with straight edges.
-        ellipse: a Rect object indicating the location and shape of the field division
-         on the full screen. Used for field sections with curved edges.
-        tincture: kAzure or kGules or similar
-        fur: a Fur object
+        surface: a pygame Surface object the size of the screen containing some tincture or fur.
+        mask: a pygame Surface object the size of the screen containing 
+          grey pixels where the surface should be visible
+          and white pixels elsewhere. Black pixels need not be contiguous.
+        fur: a Fur object representing e.g. "counter-ermine" or "vairy azure and or",
+         which will need to be scaled to fit the visible sections.
         Do not set both tincture and fur.
         Possibly I will change my mind about this structure when I implement furs.
         '''
-        self.boundary = boundary_points
-        self.ellipse = ellipse
+        self.surface = surface
+        self.mask = mask
+        '''
         self.tincture = tincture
         self.fur = fur
         if tincture != None and fur != None:
             print("Do not attempt to put a tincture and a fur on the same part of the field.")
+        '''
 
+    #DEPRECATED???
     def __str__(self):
-        return "FieldSection: boundary = " + str(self.boundary) + ", tincture = " + str(self.tincture )
+        return "FieldSection: boundary = " + str(self.mask) + ", tincture = " + str(self.tincture )
 
+    #DEPRECATED???
     def draw_field_section(self):
         return_surface = pygame.Surface((kScreenWidth, kScreenHeight), pygame.SRCALPHA)
         #SRCALPHA ensures surface initializes transparent

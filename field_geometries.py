@@ -14,52 +14,62 @@ def get_plain_field(tincture, location):
     '''
     boundary = [[location.left, location.top], [location.left, location.bottom],
                 [location.right, location.bottom], [location.right, location.top]]
-    return FieldSection(boundary, tincture = tincture)
+    size = (kScreenWidth, kScreenHeight)
+    surface = pygame.Surface(size, 0, 32)
+    surface.fill(tincture)
+    mask = pygame.Surface(size, 0, 32)
+    pygame.draw.polygon(mask, kGrey, boundary)
+    return FieldSection(surface, mask)
 
-def get_paly_boundaries(num_sections, location):
+def get_paly_boundaries(n, location):
     '''
     Returns a list of lists of lists which is the boundary boxes 
       for a paly of n field.
-    num_sections: the number of sections. Use 2 for per pale.
+    n: the number of stripes. Use 2 for per pale.
     location: a Rect representing the location on the screen of the paly portion of the field.
-     If the paly field should fill the entire shield, the Rect should be 
-     Rect(kXMargin, kYMargin, kScreenWidth, kScreenHeight).
+      If the paly field should fill the entire shield, the Rect should be 
+      Rect(kXMargin, kYMargin, kScreenWidth, kScreenHeight).
     '''
-    #TODO start here, replace constants with left/right/top/bottom/etc
     boundary_sections = []
-    for i in range(num_sections):
-        left_edge = int(kScreenWidth*i/num_sections)
-        right_edge = int(kScreenWidth*(i+1)/num_sections)
+    for i in range(n):
+        left_edge = int(location.left + location.width*i/n)
+        right_edge = int(location.left + location.width*(i+1)/n)
         boundary_sections.append(
-            [[left_edge, 0], [left_edge, kScreenHeight],
-             [right_edge, kScreenHeight], [right_edge, 0]])
+            [[left_edge, location.top], [left_edge, location.bottom],
+             [right_edge, location.bottom], [right_edge, location.top]])
     return boundary_sections
 
-def get_barry_boundaries(n):
+def get_barry_boundaries(n, location):
     '''
     Returns a list of lists of lists which is the boundary boxes 
       for a barry of n field.
     n: the number of sections. Use 2 for per fess.
+    location: a Rect representing the location on the screen of the paly portion of the field.
+     If the paly field should fill the entire shield, the Rect should be 
+     Rect(kXMargin, kYMargin, kScreenWidth, kScreenHeight).
     '''
     boundary_sections = []
     for i in range(n):
-        # fudge factor because the bottom margin is so large
-        # +kMargin means the first tincture will always be visible first
-        fudge_factor = 0.85
-        top_edge = int(kScreenHeight*i/n*fudge_factor+kYMargin) 
-        bottom_edge = int(kScreenHeight*(i+1)/n*fudge_factor+kYMargin)
+        top_edge = int(location.top + location.height*i/n)
+        bottom_edge = int(location.top + location.height*(i+1)/n)
         boundary_sections.append(
-            [[0, top_edge], [kScreenWidth, top_edge],
-             [kScreenWidth, bottom_edge], [0, bottom_edge]])
+            [[location.left, top_edge], [location.right, top_edge],
+             [location.right, bottom_edge], [location.left, bottom_edge]])
     return boundary_sections
 
-def get_bendy_boundaries(n):
+# CURRENTLY BROKEN
+def get_bendy_boundaries(n, location):
     '''
     Returns a list of lists of lists which is the boundary boxes 
       for a bendy of n field.
     n: the number of sections. Use 2 for per bend sinister.
+    location: a Rect representing the location on the screen of the bendy portion of the field.
+     If the bendy field should fill the entire shield, the Rect should be 
+     Rect(kXMargin, kYMargin, kScreenWidth, kScreenHeight).
     '''
     boundary_sections = []
+    # Draw the boundaries as though for the whole screen
+    # and then trim to fit in the rect
     fudge_factor = 1.95 #hack to handle margins
     for i in range(n):
         dexter_chief = int(kScreenWidth*i*fudge_factor/n)
@@ -67,9 +77,45 @@ def get_bendy_boundaries(n):
         dexter_base = int(kScreenHeight*(i)*fudge_factor/n)
         sinister_base = int(kScreenHeight*(i+1)*fudge_factor/n)
         boundary_sections.append(
-            [[kScreenWidth-dexter_chief, 0], [kScreenWidth-sinister_chief, 0],
-             [kScreenWidth, sinister_base], [kScreenWidth, dexter_base]])
+            [[max(location.left, kScreenWidth-dexter_chief), max(location.top, 0)],
+             [max(location.left, kScreenWidth-sinister_chief), max(location.top, 0)],
+             [min(location.right, kScreenWidth), min(location.bottom, sinister_base)],
+             [min(location.right, kScreenWidth), min(location.bottom, dexter_base)]])
+    print(boundary_sections)
     return boundary_sections
+
+'''
+    half_perim = location.width + location.height
+    stripe_thickness = half_perim/n
+    num_dexter_edge = location.height/stripe_thickness
+    num_chief_edge = location.width/stripe_thickness
+    # up the dexter edge, then across the chief edge
+    x_1 = [location.left] * int(location.height/stripe_thickness)
+    for i in range(len(x_1), n):
+        x_1.append
+
+
+
+    
+    for i in range(n):
+        # number of pixels assigned to left-and-top stripe edges so far
+        edge_traversed = int(half_perim*i/n)
+        # going up the left edge
+        if edge_traversed + i/n < location.height:
+            dexter_x = location.left
+            sinister_x = 
+            base_y = location.height - edge_traversed
+            chief_y = edge_traversed + i/n
+            boundaries.append([
+        dexter_chief_y = int(location.height*i/n)
+        sinister_chief_y = 
+        base_y = int(location.height*(i+1)/n)
+        dexter_x = int(location.width*i/n)
+        sinister_x = int(location.width*(i+1)/n)
+        boundary_sections.append(
+            [[location.left, chief_y], [location.left, base_y],
+             [dexter_x, location.bottom], [sinister_x, location.bottom]])
+'''
 
 def get_bendy_sinister_boundaries(n):
     '''
@@ -123,14 +169,17 @@ def get_chevronelly_inverted_boundaries(n):
                                   [0, kScreenHeight*(i+1)/n-y_offset]])
     return boundary_sections
 
-def get_striped_field(num_sections, tinctures, direction):
+def get_striped_field(num_sections, tinctures, direction, location):
     '''
-    Returns a Device object with a field whose lines of division 
-      all go a single direction.
+    Returns a list of FieldSection objects representing a portion of the field 
+      with one or more parallel lines of division.
     num_sections: the number of sections.
     tinctures: a list of tincture objects, e.g. [kVert, kArgent], dexter chief first.
     direction: a string indicating direction.
       Must be one of the keys in the dict below.
+    location: a Rect representing the location on the screen of the striped portion of the field.
+      If the striped field should fill the entire shield, the Rect should be 
+      Rect(kXMargin, kYMargin, kScreenWidth, kScreenHeight).
     '''
     # The values in this dict are functions.
     directions = {"per pale": get_paly_boundaries, "paly": get_paly_boundaries,
@@ -143,11 +192,15 @@ def get_striped_field(num_sections, tinctures, direction):
                   "per chevron inverted": get_chevronelly_inverted_boundaries,
                   "chevronelly inverted": get_chevronelly_inverted_boundaries}
     fieldsections = []
-    boundaries = directions[direction](num_sections)
+    boundaries = directions[direction](num_sections, location)
     for i in range(num_sections):
-        fieldsections.append(FieldSection(boundaries[i],
-                                          tincture = tinctures[i % len(tinctures)]))
-    return Device("", fieldsections)
+        size = (kScreenWidth, kScreenHeight)
+        surface = pygame.Surface(size, 0, 32)
+        surface.fill(tinctures[i % len(tinctures)])
+        mask = pygame.Surface(size, 0, 32)
+        pygame.draw.polygon(mask, kGrey, boundaries[i])
+        fieldsections.append(FieldSection(surface, mask))
+    return fieldsections
 
 def get_quarterly_field(tinctures):
     '''
