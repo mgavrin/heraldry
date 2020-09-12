@@ -6,7 +6,7 @@ from pygame import Rect
 constant_definitions =open("constants.py")
 exec(constant_definitions.read())
 full_shield = Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin)
-
+small_square = Rect(300, 300, 200, 200)
 '''
 # Plain field
 Device("", [field_geometries.get_plain_field(kPurpure, full_shield)]).display_device()
@@ -15,19 +15,19 @@ Device("", field_geometries.get_striped_field(2, [kPurpure, kArgent], "per pale"
 Device("", field_geometries.get_striped_field(7, [kPurpure, kArgent], "paly", full_shield)).display_device()
 Device("", field_geometries.get_striped_field(2, [kPurpure, kArgent], "per fess", full_shield)).display_device()
 Device("", field_geometries.get_striped_field(7, [kPurpure, kArgent], "barry", full_shield)).display_device()
-'''
-#################### BEGIN BROKEN SECTION
 Device("", field_geometries.get_striped_field(2, [kPurpure, kArgent], "per bend", full_shield)).display_device()
 Device("", field_geometries.get_striped_field(7, [kPurpure, kArgent], "bendy", full_shield)).display_device()
-'''
 Device("", field_geometries.get_striped_field(2, [kPurpure, kArgent], "per bend sinister", full_shield)).display_device()
 Device("", field_geometries.get_striped_field(7, [kPurpure, kArgent], "bendy sinister", full_shield)).display_device()
 Device("", field_geometries.get_striped_field(2, [kPurpure, kArgent], "per chevron", full_shield)).display_device()
 Device("", field_geometries.get_striped_field(7, [kPurpure, kArgent], "chevronelly", full_shield)).display_device()
 Device("", field_geometries.get_striped_field(2, [kPurpure, kArgent], "per chevron inverted", full_shield)).display_device()
 Device("", field_geometries.get_striped_field(7, [kPurpure, kArgent], "chevronelly inverted", full_shield)).display_device()
+'''
+#################### BEGIN BROKEN SECTION
 # Quarterly
 field_geometries.get_quarterly_field([kArgent, kPurpure]).display_device()
+'''
 # Canton
 field_geometries.get_quarterly_field([kArgent, kPurpure, kPurpure, kPurpure]).display_device()
 # Per saltire
