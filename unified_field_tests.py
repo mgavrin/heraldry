@@ -29,15 +29,15 @@ field_geometries.get_quarterly_field([kArgent, kPurpure], full_shield).display_d
 field_geometries.get_quarterly_field([kArgent, kPurpure, kPurpure, kPurpure], full_shield).display_device()
 # Per saltire
 field_geometries.get_per_saltire_field([kArgent, kPurpure], full_shield).display_device()
+# Per chevron throughout (and inverted)
+field_geometries.get_per_chevron_throughout_field([kPurpure, kArgent], full_shield).display_device()
+field_geometries.get_per_chevron_inverted_throughout_field([kPurpure, kArgent], full_shield).display_device()
 '''
 #################### BEGIN BROKEN SECTION
-# Per chevron throughout (and inverted)
-field_geometries.get_per_chevron_throughout_field([kArgent, kPurpure]).display_device()
-field_geometries.get_per_chevron_inverted_throughout_field([kArgent, kPurpure]).display_device()
-'''
 # Vetu
 field_geometries.get_vetu_field([kArgent, kPurpure]).display_device()
 field_geometries.get_vetu_ploye_field([kArgent, kPurpure]).display_device()
+'''
 # Per pall (and inverted)
 field_geometries.get_per_pall_field([kArgent, kPurpure, kAzure]).display_device()
 field_geometries.get_per_pall_reversed_field([kPurpure, kAzure, kArgent]).display_device()

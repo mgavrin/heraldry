@@ -281,42 +281,73 @@ def get_per_saltire_field(tinctures, location):
         field_sections.append(FieldSection(surface, mask))
     return Device("", field_sections)
 
-def get_per_chevron_throughout_field(tinctures):
+def get_per_chevron_throughout_field(tinctures, location):
     '''
     Returns a Device with a per chevron throughout field.
     tinctures: a list of exactly two tinctures.
       The outer sections are the 0th tincture and the inner section
       is the 1st tincture.
+    location: a Rect representing the location on the screen of the per chevron throughout 
+      portion of the field. If the entire field should be per chevron througout, 
+      the Rect should be 
+      Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
     '''
     if len(tinctures) != 2:
         print ("A per chevron throughout field must have exactly two tinctures.")
         return Device("")
-    chief_boundary = [[0,0], [0, kScreenHeight], [int(kScreenWidth/2), kYMargin],
-                             [kScreenWidth, kScreenHeight], [kScreenWidth, 0]]
-    base_boundary = [[0, kScreenHeight], [int(kScreenWidth/2), kYMargin],
-                     [kScreenWidth, kScreenHeight]]
-    chief_section = FieldSection(chief_boundary, tincture = tinctures[0])
-    base_section = FieldSection(base_boundary, tincture = tinctures[1])
+    chief_boundary = [[location.left, location.top], [location.left, location.bottom],
+                      [location.centerx, location.top], [location.right, location.bottom],
+                      [location.right, location.top]]
+    base_boundary = [[location.left, location.bottom],
+                     [location.centerx, location.top],
+                     [location.right, location.bottom]] 
+    size = (kScreenWidth, kScreenHeight)
+    chief_surface = pygame.Surface(size, 0, 32)
+    chief_surface.fill(tinctures[0])
+    chief_mask = pygame.Surface(size, 0, 32)
+    pygame.draw.polygon(chief_mask, kGrey, chief_boundary)
+    chief_section = FieldSection(chief_surface, chief_mask)
+    
+    base_surface = pygame.Surface(size, 0, 32)
+    base_surface.fill(tinctures[1])
+    base_mask = pygame.Surface(size, 0, 32)
+    pygame.draw.polygon(base_mask, kGrey, base_boundary)
+    base_section = FieldSection(base_surface, base_mask)
     return Device("", [chief_section, base_section])
     
-def get_per_chevron_inverted_throughout_field(tinctures):
+def get_per_chevron_inverted_throughout_field(tinctures, location):
     '''
     Returns a Device with a per chevron inverted throughout field.
     tinctures: a list of exactly two tinctures.
       The middle section is the 0th tincture and the outer sections
       are the 1st tincture.
+    location: a Rect representing the location on the screen of the per chevron
+      inverted throughout portion of the field. If the entire field should be 
+      per chevron inverted througout, the Rect should be 
+      Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
     '''
     x_margin = int(kScreenWidth/22)
     if len(tinctures) != 2:
         print ("A per chevron inverted throughout field must have exactly two tinctures.")
         return Device("")
-    base_boundary = [[x_margin,0], [x_margin, kScreenHeight],
-                     [kScreenWidth-x_margin, kScreenHeight], [kScreenWidth-x_margin, 0],
-                     [int(kScreenWidth/2),  int(kScreenHeight*0.87)]]
-    chief_boundary = [[x_margin, 0], [int(kScreenWidth/2), int(kScreenHeight*0.87)],
-                     [kScreenWidth-x_margin, 0]]
-    chief_section = FieldSection(chief_boundary, tincture = tinctures[0])
-    base_section = FieldSection(base_boundary, tincture = tinctures[1])
+    chief_boundary = [[location.left, location.top],
+                     [location.centerx, location.bottom],
+                     [location.right, location.top]]
+    base_boundary = [[location.left, location.bottom], [location.left, location.top],
+                      [location.centerx, location.bottom], [location.right, location.top],
+                      [location.right, location.bottom]] 
+    size = (kScreenWidth, kScreenHeight)
+    chief_surface = pygame.Surface(size, 0, 32)
+    chief_surface.fill(tinctures[0])
+    chief_mask = pygame.Surface(size, 0, 32)
+    pygame.draw.polygon(chief_mask, kGrey, chief_boundary)
+    chief_section = FieldSection(chief_surface, chief_mask)
+    
+    base_surface = pygame.Surface(size, 0, 32)
+    base_surface.fill(tinctures[1])
+    base_mask = pygame.Surface(size, 0, 32)
+    pygame.draw.polygon(base_mask, kGrey, base_boundary)
+    base_section = FieldSection(base_surface, base_mask)
     return Device("", [chief_section, base_section])
 
 def get_vetu_field(tinctures):
