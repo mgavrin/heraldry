@@ -23,18 +23,18 @@ Device("", field_geometries.get_striped_field(2, [kPurpure, kArgent], "per chevr
 Device("", field_geometries.get_striped_field(7, [kPurpure, kArgent], "chevronelly", full_shield)).display_device()
 Device("", field_geometries.get_striped_field(2, [kPurpure, kArgent], "per chevron inverted", full_shield)).display_device()
 Device("", field_geometries.get_striped_field(7, [kPurpure, kArgent], "chevronelly inverted", full_shield)).display_device()
+# Quarterly
+field_geometries.get_quarterly_field([kArgent, kPurpure], full_shield).display_device()
+# Canton
+field_geometries.get_quarterly_field([kArgent, kPurpure, kPurpure, kPurpure], full_shield).display_device()
+# Per saltire
+field_geometries.get_per_saltire_field([kArgent, kPurpure], full_shield).display_device()
 '''
 #################### BEGIN BROKEN SECTION
-# Quarterly
-field_geometries.get_quarterly_field([kArgent, kPurpure]).display_device()
-'''
-# Canton
-field_geometries.get_quarterly_field([kArgent, kPurpure, kPurpure, kPurpure]).display_device()
-# Per saltire
-field_geometries.get_per_saltire_field([kArgent, kPurpure]).display_device()
 # Per chevron throughout (and inverted)
 field_geometries.get_per_chevron_throughout_field([kArgent, kPurpure]).display_device()
 field_geometries.get_per_chevron_inverted_throughout_field([kArgent, kPurpure]).display_device()
+'''
 # Vetu
 field_geometries.get_vetu_field([kArgent, kPurpure]).display_device()
 field_geometries.get_vetu_ploye_field([kArgent, kPurpure]).display_device()

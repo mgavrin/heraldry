@@ -134,7 +134,6 @@ def get_chevronelly_boundaries(n, location):
                            [location.left, int(location.top+total_height*(i+1)/n)]])
     return boundaries
 
-# CURRENTLY BROKEN
 def get_chevronelly_inverted_boundaries(n, location):
     '''
     Returns a list of lists of lists which is the boundary boxes 
@@ -198,7 +197,8 @@ def get_striped_field(num_sections, tinctures, direction, location):
         fieldsections.append(FieldSection(surface, mask))
     return fieldsections
 
-def get_quarterly_field(tinctures):
+# CURRENTLY BROKEN
+def get_quarterly_field(tinctures, location):
     '''
     Returns a device object with a quarterly field.
     tinctures: a list of exactly two or four tinctures. Two is recommended.
@@ -206,36 +206,43 @@ def get_quarterly_field(tinctures):
       and the sinister chief and dexter base quarters are the 1st tincture.
       If four, the tinctures are used in the order
       [dexter chief, sinister chief, sinister base, dexter base].
+    location: a Rect representing the location on the screen of the 
+      quarterly portion of the field. If the quarterly field should 
+      fill the entire shield, the Rect should be 
+      Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
     '''
     if len(tinctures) != 2 and len(tinctures) != 4:
         print("Quarterly fields can't have", len(tinctures), "tinctures")
         return Device("")
-    dexter_chief_quarter = [[0, 0],
-                            [0, int(kScreenHeight*5/12)],
-                            [int(kScreenWidth/2), int(kScreenHeight*5/12)],
-                            [int(kScreenWidth/2), 0]]
-    sinister_chief_quarter = [[int(kScreenWidth/2), 0],
-                              [int(kScreenWidth/2), int(kScreenHeight*5/12)],
-                              [kScreenWidth, int(kScreenHeight*5/12)],
-                              [kScreenWidth, 0]]
-    sinister_base_quarter = [[int(kScreenWidth/2), int(kScreenHeight*5/12)],
-                             [int(kScreenWidth/2), kScreenHeight],
-                             [kScreenWidth, kScreenHeight],
-                             [kScreenWidth, int(kScreenHeight*5/12)]]
-    dexter_base_quarter = [[0, int(kScreenHeight*5/12)],
-                           [0, kScreenHeight],
-                           [int(kScreenWidth/2), kScreenHeight],
-                           [int(kScreenWidth/2), int(kScreenHeight*5/12)]]
-    dexter_chief_section = FieldSection(dexter_chief_quarter, tincture = tinctures[0])
-    sinister_chief_section = FieldSection(sinister_chief_quarter, tincture = tinctures[1])
-    sinister_base_section = FieldSection(sinister_base_quarter,
-                                         tincture = tinctures[2 % len(tinctures)])
-    dexter_base_section = FieldSection(dexter_base_quarter,
-                                       tincture = tinctures[3 % len(tinctures)])
-    return Device("", [dexter_chief_section, sinister_chief_section,
-                       dexter_base_section, sinister_base_section])
+    dexter_chief_quarter = [[location.left, location.top],
+                            [location.centerx, location.top],
+                            [location.centerx, location.centery],
+                            [location.left, location.centery]]
+    sinister_chief_quarter = [[location.centerx, location.top],
+                            [location.right, location.top],
+                            [location.right, location.centery],
+                            [location.centerx, location.centery]]
+    sinister_base_quarter = [[location.centerx, location.centery],
+                            [location.right, location.centery],
+                            [location.right, location.bottom],
+                            [location.centerx, location.bottom]]
+    dexter_base_quarter = [[location.left, location.centery],
+                            [location.centerx, location.centery],
+                            [location.centerx, location.bottom],
+                            [location.left, location.bottom]]
+    quarters = [dexter_chief_quarter, sinister_chief_quarter,
+                sinister_base_quarter, dexter_base_quarter]
+    size = (kScreenWidth, kScreenHeight)
+    field_sections = []
+    for i in range(4):
+        surface = pygame.Surface(size, 0, 32)
+        surface.fill(tinctures[i % len(tinctures)])
+        mask = pygame.Surface(size, 0, 32)
+        pygame.draw.polygon(mask, kGrey, quarters[i])
+        field_sections.append(FieldSection(surface, mask))
+    return Device("", field_sections)
 
-def get_per_saltire_field(tinctures):
+def get_per_saltire_field(tinctures, location):
     '''
     Returns a device object with a per saltire field.
     tinctures: a list of exactly two or four tinctures. Two is recommended.
@@ -243,33 +250,36 @@ def get_per_saltire_field(tinctures):
       dexter and sinister sections are the 1st tincture.
       If four, the tinctures are used anticlockwise from chief:
       [chief, dexter, base, sinister].
+    location: a Rect representing the location on the screen of the per saltire 
+      portion of the field. If the per saltire field should fill the entire shield, 
+      the Rect should be 
+      Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
     '''
     if len(tinctures) != 2 and len(tinctures) != 4:
         print("Quarterly fields can't have", len(tinctures), "tinctures")
         return Device("")
-    chief_saltire_boundary = [[int(kScreenWidth*.03), 0],
-                              [int(kScreenWidth/2), int(kScreenHeight*5/12)],
-                              [int(kScreenWidth*.97), 0]]
-    dexter_saltire_boundary = [[int(kScreenWidth*.03), 0],
-                               [int(kScreenWidth/2), int(kScreenHeight*5/12)],
-                               [int(kScreenWidth*.03), int(kScreenHeight*10/12)]]
-    # There are four points here. Don't mess with this
-    # without looking at it really carefully first.
-    base_saltire_boundary = [[int(kScreenWidth*.03), int(kScreenHeight*10/12)],
-                             [int(kScreenWidth/2), int(kScreenHeight*5/12)],
-                             [int(kScreenWidth*.97), int(kScreenHeight*10/12)],
-                             [int(kScreenWidth/2), kScreenHeight]]
-    sinister_saltire_boundary = [[int(kScreenWidth*.97), 0],
-                                 [int(kScreenWidth/2), int(kScreenHeight*5/12)],
-                                 [int(kScreenWidth*.97), int(kScreenHeight*10/12)]]
-    chief_saltire_section = FieldSection(chief_saltire_boundary, tincture = tinctures[0])
-    dexter_saltire_section = FieldSection(dexter_saltire_boundary, tincture = tinctures[1])
-    base_saltire_section = FieldSection(base_saltire_boundary,
-                                        tincture = tinctures[2 % len(tinctures)])
-    sinister_saltire_section = FieldSection(sinister_saltire_boundary,
-                                            tincture = tinctures[3 % len(tinctures)])
-    return Device("", [chief_saltire_section, dexter_saltire_section,
-                       base_saltire_section, sinister_saltire_section])
+    chief_boundary =    [[location.left, location.top],
+                         [location.right, location.top],
+                         [location.centerx, location.centery]]
+    dexter_boundary =   [[location.left, location.top],
+                         [location.left, location.bottom],
+                         [location.centerx, location.centery]]
+    base_boundary =     [[location.left, location.bottom],
+                         [location.right, location.bottom],
+                         [location.centerx, location.centery]]
+    sinister_boundary = [[location.right, location.top],
+                         [location.right, location.bottom],
+                         [location.centerx, location.centery]]
+    boundaries = [chief_boundary, dexter_boundary, base_boundary, sinister_boundary]
+    size = (kScreenWidth, kScreenHeight)
+    field_sections = []
+    for i in range(4):
+        surface = pygame.Surface(size, 0, 32)
+        surface.fill(tinctures[i % len(tinctures)])
+        mask = pygame.Surface(size, 0, 32)
+        pygame.draw.polygon(mask, kGrey, boundaries[i])
+        field_sections.append(FieldSection(surface, mask))
+    return Device("", field_sections)
 
 def get_per_chevron_throughout_field(tinctures):
     '''
