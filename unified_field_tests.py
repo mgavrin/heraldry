@@ -33,10 +33,11 @@ field_geometries.get_per_saltire_field([kArgent, kPurpure], full_shield).display
 field_geometries.get_per_chevron_throughout_field([kPurpure, kArgent], full_shield).display_device()
 field_geometries.get_per_chevron_inverted_throughout_field([kPurpure, kArgent], full_shield).display_device()
 '''
-#################### BEGIN BROKEN SECTION
 # Vetu
-field_geometries.get_vetu_field([kArgent, kPurpure]).display_device()
-field_geometries.get_vetu_ploye_field([kArgent, kPurpure]).display_device()
+field_geometries.get_vetu_field([kArgent, kPurpure], full_shield).display_device()
+#################### BEGIN BROKEN SECTION
+long_skinny = Rect(300, 300, 50, 200)
+field_geometries.get_vetu_ploye_field([kArgent, kPurpure], full_shield).display_device()
 '''
 # Per pall (and inverted)
 field_geometries.get_per_pall_field([kArgent, kPurpure, kAzure]).display_device()

@@ -350,68 +350,72 @@ def get_per_chevron_inverted_throughout_field(tinctures, location):
     base_section = FieldSection(base_surface, base_mask)
     return Device("", [chief_section, base_section])
 
-def get_vetu_field(tinctures):
+def get_vetu_field(tinctures, location):
     '''
     Returns a Device with a vetu field.
     tinctures: a list of exactly two tinctures.
       The outer sections are the 0th tincture, and the inner
       lozenge is the 1st tincture.
+    location: a Rect representing the location on the screen of the vetu
+      portion of the field. For a vetu field on the full shield, the Rect should be 
+      Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
    '''
-    x_margin = 75
-    y_margin = int(kScreenHeight/23)
-    shield_bottom = int(kScreenHeight*0.87)
-    y_midpoint = int((y_margin + shield_bottom)/2)
     if len(tinctures) != 2:
         print ("A vetu field must have exactly two tinctures.")
         return Device("")
-    # Just do the whole field in the outer tincture
-    # and then stick the lozenge on top of it.
-    outer_boundary = [[0, 0], [0, kScreenHeight],
-                     [kScreenWidth, kScreenHeight], [kScreenWidth, 0]]
-    inner_boundary = [[int(kScreenWidth/2), y_margin],
-                      [kScreenWidth-x_margin, y_midpoint],
-                      [int(kScreenWidth/2), shield_bottom],
-                      [x_margin, y_midpoint]]
-    outer_section = FieldSection(outer_boundary, tincture = tinctures[0])
-    inner_section = FieldSection(inner_boundary, tincture = tinctures[1])
+    outer_boundary = [[location.centerx, location.top],
+                      [location.left, location.top], [location.left, location.bottom],
+                      [location.right, location.bottom], [location.right, location.top],
+                      [location.centerx, location.top], [location.left, location.centery],
+                      [location.centerx, location.bottom], [location.right, location.centery]]
+    inner_boundary = outer_boundary[5:]
+    size = (kScreenWidth, kScreenHeight)
+    outer_surface = pygame.Surface(size, 0, 32)
+    outer_surface.fill(tinctures[0])
+    outer_mask = pygame.Surface(size, 0, 32)
+    pygame.draw.polygon(outer_mask, kGrey, outer_boundary)
+    outer_section = FieldSection(outer_surface, outer_mask)
+    
+    inner_surface = pygame.Surface(size, 0, 32)
+    inner_surface.fill(tinctures[1])
+    inner_mask = pygame.Surface(size, 0, 32)
+    pygame.draw.polygon(inner_mask, kGrey, inner_boundary)
+    inner_section = FieldSection(inner_surface, inner_mask)
     return Device("", [outer_section, inner_section])
 
-def get_vetu_ploye_field(tinctures):
+def get_vetu_ploye_field(tinctures, location):
     '''
     Returns a Device with a vetu ploye field.
     tinctures: a list of exactly two tinctures.
       The outer sections are the 0th tincture, and the inner
       lozenge is the 1st tincture.
+    location: a Rect representing the location on the screen of the vetu ploye
+      portion of the field. For a vetu ploye field on the full shield, the Rect should be 
+      Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
+
    '''
-    x_margin = 75
-    y_margin = int(kScreenHeight/23)
-    shield_bottom = int(kScreenHeight*0.87)
-    y_midpoint = int((y_margin + shield_bottom)/2)
-    y_fudge_factor = 7
     if len(tinctures) != 2:
         print ("A vetu ploye field must have exactly two tinctures.")
         return Device("")
-    # Just do the whole field in the inner tincture
-    # and then stick the ellipses on top of it.
-    inner_boundary = [[0, 0], [0, kScreenHeight],
-                     [kScreenWidth, kScreenHeight], [kScreenWidth, 0]]
-    dexter_chief_rect = Rect(-1*kScreenWidth/2, -1*y_midpoint, kScreenWidth, y_midpoint*2)
-    sinister_chief_rect = Rect(kScreenWidth/2, -1*y_midpoint, kScreenWidth, y_midpoint*2)
-    dexter_base_rect = Rect(-1*kScreenWidth/2, y_midpoint-y_fudge_factor,
-                            kScreenWidth, y_midpoint*2)
-    sinister_base_rect = Rect(kScreenWidth/2, y_midpoint-y_fudge_factor,
-                              kScreenWidth, y_midpoint*2)
-    dexter_chief_section = FieldSection([], ellipse = dexter_chief_rect,
-                                        tincture = tinctures[0])
-    sinister_chief_section = FieldSection([], ellipse = sinister_chief_rect,
-                                        tincture = tinctures[0])
-    dexter_base_section = FieldSection([], ellipse = dexter_base_rect,
-                                        tincture = tinctures[0])
-    sinister_base_section = FieldSection([], ellipse = sinister_base_rect,
-                                        tincture = tinctures[0])
-    inner_section = FieldSection(inner_boundary, tincture=tinctures[1])
-    return Device("", [inner_section, dexter_chief_section, sinister_chief_section,
-                       dexter_base_section, sinister_base_section])
+    size = (kScreenWidth, kScreenHeight)
+    outer_surface = pygame.Surface(size, 0, 32)
+    outer_surface.fill(tinctures[0])
+    outer_mask = pygame.Surface(size, 0, 32)
+    # starburst_mask.png is already kGrey in the appropriate places
+    outer_mask_scaled = pygame.transform.scale(
+        pygame.image.load(os.path.join("art", "starburst_mask.png")),
+        (location.width, location.height))
+    outer_mask.blit(outer_mask_scaled, (location.left, location.top))
+    outer_section = FieldSection(outer_surface, outer_mask)
+
+    inner_surface = pygame.Surface(size, 0, 32)
+    inner_surface.fill(tinctures[1])
+    inner_mask = pygame.Surface(size, 0, 32)
+    inner_mask.fill(kGrey)
+    inner_section = FieldSection(inner_surface, inner_mask)
+    # Order is important here: inner_section is just a solid color with no shape,
+    # so outer_section needs to be on top.
+    return Device("", [inner_section, outer_section])
 
 def get_per_pall_field(tinctures):
     '''

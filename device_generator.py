@@ -43,11 +43,11 @@ class Device:
         for section in self.field_sections:
             section.surface.lock
             section.mask.lock
+            self.screen.lock
             for x in range(kScreenWidth):
                 for y in range(kScreenHeight):
                     if section.mask.get_at((x,y)) == kGrey:
                         self.screen.set_at((x,y), section.surface.get_at((x,y)))
-            #self.screen.blit(field_section.surface, field_section.blit_location)
         for charge in self.charge_groups:
             pass
             #charge.draw_charge()
