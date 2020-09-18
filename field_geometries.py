@@ -248,7 +248,7 @@ def get_per_saltire_field(tinctures, location):
     tinctures: a list of exactly two or four tinctures. Two is recommended.
       If two, the chief and base sections are the 0th tincture and the
       dexter and sinister sections are the 1st tincture.
-      If four, the tinctures are used anticlockwise from chief:
+      If four, the tinctures are used widdershins from chief:
       [chief, dexter, base, sinister].
     location: a Rect representing the location on the screen of the per saltire 
       portion of the field. If the per saltire field should fill the entire shield, 

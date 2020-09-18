@@ -76,38 +76,6 @@ class FieldSection:
         mask: a pygame Surface object the size of the screen containing 
           grey pixels where the surface should be visible
           and white pixels elsewhere. Black pixels need not be contiguous.
-        fur: a Fur object representing e.g. "counter-ermine" or "vairy azure and or",
-         which will need to be scaled to fit the visible sections.
-        Do not set both tincture and fur.
-        Possibly I will change my mind about this structure when I implement furs.
         '''
         self.surface = surface
         self.mask = mask
-        '''
-        self.tincture = tincture
-        self.fur = fur
-        if tincture != None and fur != None:
-            print("Do not attempt to put a tincture and a fur on the same part of the field.")
-        '''
-
-    #DEPRECATED???
-    def __str__(self):
-        return "FieldSection: boundary = " + str(self.mask) + ", tincture = " + str(self.tincture )
-
-    #DEPRECATED???
-    def draw_field_section(self):
-        return_surface = pygame.Surface((kScreenWidth, kScreenHeight), pygame.SRCALPHA)
-        #SRCALPHA ensures surface initializes transparent
-        if self.boundary != []:
-            if self.tincture:
-                pygame.draw.polygon(return_surface, self.tincture, self.boundary)
-            else:
-                pass #handle furs once you have a Fur class
-        elif self.ellipse != None:
-            if self.tincture:
-                pygame.draw.ellipse(return_surface, self.tincture, self.ellipse)
-            else:
-                pass #handle furs once you have a Fur class
-            
-        return return_surface
-
