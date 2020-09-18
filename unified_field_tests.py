@@ -32,16 +32,15 @@ field_geometries.get_per_saltire_field([kArgent, kPurpure], full_shield).display
 # Per chevron throughout (and inverted)
 field_geometries.get_per_chevron_throughout_field([kPurpure, kArgent], full_shield).display_device()
 field_geometries.get_per_chevron_inverted_throughout_field([kPurpure, kArgent], full_shield).display_device()
-'''
 # Vetu
 field_geometries.get_vetu_field([kArgent, kPurpure], full_shield).display_device()
-#################### BEGIN BROKEN SECTION
-long_skinny = Rect(300, 300, 50, 200)
 field_geometries.get_vetu_ploye_field([kArgent, kPurpure], full_shield).display_device()
 '''
+#################### BEGIN BROKEN SECTION
 # Per pall (and inverted)
-field_geometries.get_per_pall_field([kArgent, kPurpure, kAzure]).display_device()
-field_geometries.get_per_pall_reversed_field([kPurpure, kAzure, kArgent]).display_device()
+field_geometries.get_per_pall_field([kArgent, kPurpure, kAzure], full_shield).display_device()
+field_geometries.get_per_pall_reversed_field([kPurpure, kAzure, kArgent], full_shield).display_device()
+'''
 # Gyronny
 field_geometries.get_gyronny_field(6, [kPurpure, kArgent]).display_device()
 field_geometries.get_gyronny_field(6, [kPurpure, kArgent], horizontal=True).display_device()

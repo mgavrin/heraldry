@@ -417,42 +417,84 @@ def get_vetu_ploye_field(tinctures, location):
     # so outer_section needs to be on top.
     return Device("", [inner_section, outer_section])
 
-def get_per_pall_field(tinctures):
+def get_per_pall_field(tinctures, location):
     '''
     Returns a device with a per pall field.
     tinctures: a list of exactly 3 tinctures,
      which will be used in the order [chief, dexter, sinister].
+    location: a Rect representing the location on the screen of the per pall
+      portion of the field. For a vetu ploye field on the full shield, the Rect should be 
+      Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
     '''
     if len(tinctures) != 3:
         print("A per pall field must have exactly 3 tinctures.")
         return Device("")
-    center = [int(kScreenWidth/2), int(kScreenHeight*0.3)]
-    chief_boundary = [[0, 0], [kScreenWidth, 0], center]
-    dexter_boundary = [[0, 0], [0, kScreenHeight], [int(kScreenWidth/2), kScreenHeight], center]
-    sinister_boundary = [[kScreenWidth, 0], [kScreenWidth, kScreenHeight],
-                         [int(kScreenWidth/2), kScreenHeight], center]
-    chief_section = FieldSection(chief_boundary, tincture=tinctures[0])
-    dexter_section = FieldSection(dexter_boundary, tincture=tinctures[1])
-    sinister_section = FieldSection(sinister_boundary, tincture=tinctures[2])
+    center = [location.centerx, int(location.top+location.height*0.3)]
+    chief_boundary = [[location.left, location.top], [location.right, location.top], center]
+    dexter_boundary = [[location.left, location.top], [location.left, location.bottom],
+                       [location.centerx, location.bottom], center]
+    sinister_boundary = [[location.right, location.top], [location.right, location.bottom],
+                         [location.centerx, location.bottom], center]
+    size = (kScreenWidth, kScreenHeight)
+    
+    chief_surface = pygame.Surface(size, 0, 32)
+    chief_surface.fill(tinctures[0])
+    chief_mask = pygame.Surface(size, 0, 32)
+    pygame.draw.polygon(chief_mask, kGrey, chief_boundary)
+    
+    dexter_surface = pygame.Surface(size, 0, 32)
+    dexter_surface.fill(tinctures[1])
+    dexter_mask = pygame.Surface(size, 0, 32)
+    pygame.draw.polygon(dexter_mask, kGrey, dexter_boundary)
+    
+    sinister_surface = pygame.Surface(size, 0, 32)
+    sinister_surface.fill(tinctures[2])
+    sinister_mask = pygame.Surface(size, 0, 32)
+    pygame.draw.polygon(sinister_mask, kGrey, sinister_boundary)
+    
+    chief_section = FieldSection(chief_surface, chief_mask)
+    dexter_section = FieldSection(dexter_surface, dexter_mask)
+    sinister_section = FieldSection(sinister_surface, sinister_mask)
     return Device("", [chief_section, dexter_section, sinister_section])
 
-def get_per_pall_reversed_field(tinctures):
+def get_per_pall_reversed_field(tinctures, location):
     '''
     Returns a device with a per pall reversed field.
     tinctures: a list of exactly 3 tinctures,
      which will be used in the order [dexter, sinister, base].
+    location: a Rect representing the location on the screen of the per pall reversed
+      portion of the field. For a vetu ploye field on the full shield, the Rect should be 
+      Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
     '''
     if len(tinctures) != 3:
         print("A per pall reversed field must have exactly 3 tinctures.")
         return Device("")
-    center = [int(kScreenWidth/2), int(kScreenHeight*0.5)]
-    base_boundary = [[0, kScreenHeight], [kScreenWidth, kScreenHeight], center]
-    dexter_boundary = [[0, 0], [0, kScreenHeight], center, [int(kScreenWidth/2), 0]]
-    sinister_boundary = [[kScreenWidth, 0], [kScreenWidth, kScreenHeight],
-                         center, [int(kScreenWidth/2), 0]]
-    dexter_section = FieldSection(dexter_boundary, tincture=tinctures[0])
-    sinister_section = FieldSection(sinister_boundary, tincture=tinctures[1])
-    base_section = FieldSection(base_boundary, tincture=tinctures[2])
+    center = [location.centerx, int(location.top+location.height*0.5)]
+    base_boundary = [[location.left, location.bottom], [location.right, location.bottom], center]
+    dexter_boundary = [[location.left, location.bottom], [location.left, location.top],
+                       [location.centerx, location.top], center]
+    sinister_boundary = [[location.right, location.bottom], [location.right, location.top],
+                         [location.centerx, location.top], center]
+    size = (kScreenWidth, kScreenHeight)
+    
+    base_surface = pygame.Surface(size, 0, 32)
+    base_surface.fill(tinctures[0])
+    base_mask = pygame.Surface(size, 0, 32)
+    pygame.draw.polygon(base_mask, kGrey, base_boundary)
+    
+    dexter_surface = pygame.Surface(size, 0, 32)
+    dexter_surface.fill(tinctures[1])
+    dexter_mask = pygame.Surface(size, 0, 32)
+    pygame.draw.polygon(dexter_mask, kGrey, dexter_boundary)
+    
+    sinister_surface = pygame.Surface(size, 0, 32)
+    sinister_surface.fill(tinctures[2])
+    sinister_mask = pygame.Surface(size, 0, 32)
+    pygame.draw.polygon(sinister_mask, kGrey, sinister_boundary)
+    
+    base_section = FieldSection(base_surface, base_mask)
+    dexter_section = FieldSection(dexter_surface, dexter_mask)
+    sinister_section = FieldSection(sinister_surface, sinister_mask)
     return Device("", [dexter_section, sinister_section, base_section])
 
 def get_gyronny_field(num_sections, tinctures, horizontal=False):
