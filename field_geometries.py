@@ -423,7 +423,7 @@ def get_per_pall_field(tinctures, location):
     tinctures: a list of exactly 3 tinctures,
      which will be used in the order [chief, dexter, sinister].
     location: a Rect representing the location on the screen of the per pall
-      portion of the field. For a vetu ploye field on the full shield, the Rect should be 
+      portion of the field. For a per pall field on the full shield, the Rect should be 
       Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
     '''
     if len(tinctures) != 3:
@@ -463,7 +463,8 @@ def get_per_pall_reversed_field(tinctures, location):
     tinctures: a list of exactly 3 tinctures,
      which will be used in the order [dexter, sinister, base].
     location: a Rect representing the location on the screen of the per pall reversed
-      portion of the field. For a vetu ploye field on the full shield, the Rect should be 
+      portion of the field. For a per pall reversed field on the full shield, 
+      the Rect should be 
       Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
     '''
     if len(tinctures) != 3:
@@ -497,13 +498,18 @@ def get_per_pall_reversed_field(tinctures, location):
     sinister_section = FieldSection(sinister_surface, sinister_mask)
     return Device("", [dexter_section, sinister_section, base_section])
 
-def get_gyronny_field(num_sections, tinctures, horizontal=False):
+def get_gyronny_field(num_sections, tinctures, location, horizontal=False):
     '''
     Returns a Device with a gyronny field of num_sections sections.
     num_sections: the number of sections. 6, 8, 10, and 12 are supported.
      4 is just quarterly or per saltire. 
     tinctures: A list of exactly two tinctures; the first one 
      will be used in the dexter chief corner.
+    location: a Rect representing the location on the screen of the gyronny
+      portion of the field. For a gyronny field on the full shield, the Rect should be 
+      Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
+      If the gyronny field does not take up the whole shield, it will be a polygon with
+      <num_sections> sides.
     horizontal: For gyronny of 6 or 10,
      if it is set to False, there will be a vertical line of division but no
      horizontal one. If it is set to True, there will be a horizontal line of division but no vertical one. 
@@ -516,24 +522,29 @@ def get_gyronny_field(num_sections, tinctures, horizontal=False):
         print("A gyronny field must have exactly 2 tinctures.")
         return Device("")
     
-    center = [int(kScreenWidth/2), int(kScreenHeight*0.4)]
+    center = [location.centerx, location.centery]
     arc_width_radians = 2*math.pi/num_sections
     if num_sections in (8, 12) or not horizontal:
         thetas = [i*arc_width_radians - math.pi*0.5 for i in range(num_sections)]
     else:
         thetas = [(i+0.5)*arc_width_radians - math.pi*0.5 for i in range(num_sections)]
-    x_points = [max(kScreenWidth, kScreenHeight)*math.cos(theta) for theta in thetas]
-    y_points = [max(kScreenWidth, kScreenHeight)*math.sin(theta) for theta in thetas]
+    x_points = [max(location.width, location.height)*math.cos(theta) for theta in thetas]
+    y_points = [max(location.width, location.height)*math.sin(theta) for theta in thetas]
     sections = []
     for i in range(num_sections):
         boundary = [center,
                     [int(x_points[i]+center[0]), int(y_points[i]+center[1])],
                     [int(x_points[(i+1) % num_sections]+center[0]),
                      int(y_points[(i+1) % num_sections]+center[1])]]
-        sections.append(FieldSection(boundary, tincture=tinctures[(i+1) % len(tinctures)]))
+        size = (kScreenWidth, kScreenHeight)
+        surface = pygame.Surface(size, 0, 32)
+        surface.fill(tinctures[(i+1) % len(tinctures)])
+        mask = pygame.Surface(size, 0, 32)
+        pygame.draw.polygon(mask, kGrey, boundary)
+        sections.append(FieldSection(surface, mask))
     return Device("", sections)
 
-def get_checky_field(num_sections, tinctures):
+def get_checky_field(num_sections, tinctures, location):
     '''
     Returns a Device with a checky field.
     num_sections: the number of individual boxes across the top of the shield.
@@ -541,65 +552,96 @@ def get_checky_field(num_sections, tinctures):
      than the number of boxes in the longest vertical column.
     tinctures: A list of exactly two tinctures; the first one 
      will be used in the dexter chief corner.
+    location: a Rect representing the location on the screen of the lozengy
+      portion of the field. For a lozengy field on the full shield, the Rect should be 
+      Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
     '''
     if len(tinctures) != 2:
         print("A checky field must have exactly 2 tinctures.")
         return Device("")
-    side_length = int((kScreenWidth-2*kXMargin)/num_sections)
+    side_length = int(location.width/num_sections)
     if side_length < 30:
         print("Warning: that many sections won't work well on this size of screen. Consider using fewer.")
     sections = []
-    cur_x = kXMargin
-    cur_y = kYMargin
+    cur_x = location.left
+    cur_y = location.top
     cur_tincture = 0
     next_row_start_tincture = 1
+    size = (kScreenWidth, kScreenHeight)
+    tincture_0_surface = pygame.Surface(size, 0, 32)
+    tincture_0_surface.fill(tinctures[0])
+    tincture_1_surface = pygame.Surface(size, 0, 32)
+    tincture_1_surface.fill(tinctures[1])
+    tincture_0_mask = pygame.Surface(size, 0, 32)
+    tincture_1_mask = pygame.Surface(size, 0, 32)
     while True:
         boundary = [[cur_x, cur_y], [cur_x, cur_y + side_length],
                     [cur_x + side_length, cur_y + side_length], [cur_x + side_length, cur_y]]
-        sections.append(FieldSection(boundary, tincture=tinctures[cur_tincture]))
+        if cur_tincture == 0:
+            pygame.draw.polygon(tincture_0_mask, kGrey, boundary)
+        else:
+            pygame.draw.polygon(tincture_1_mask, kGrey, boundary)
         cur_x += side_length
         cur_tincture = (cur_tincture+1) % 2
-        if cur_x > kScreenWidth - kXMargin + side_length:
-            cur_x = kXMargin
+        if cur_x > location.right + side_length:
+            cur_x = location.left
             cur_y += side_length
             cur_tincture = next_row_start_tincture
             next_row_start_tincture = (next_row_start_tincture + 1) % 2
-        if cur_y >= kScreenHeight:
+        if cur_y >= location.bottom:
+            sections.append(FieldSection(tincture_0_surface, tincture_0_mask))
+            sections.append(FieldSection(tincture_1_surface, tincture_1_mask))
             return Device("", sections)
             
-def get_lozengy_field(num_sections, tinctures, proportion = 2):
+def get_lozengy_field(num_sections, tinctures, location, proportion = 2):
     '''
     Returns a Device with a lozengy field.
     num_sections: the number of individual lozenges across the top of the shield.
      This is distinct from the total number of lozenges on the shield,
     tinctures: A list of exactly two tinctures; the first one 
      will be used in the initial row of bottom-halves.
+    location: a Rect representing the location on the screen of the lozengy
+      portion of the field. For a lozengy field on the full shield, the Rect should be 
+      Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
     proportion: the ratio of the lozenge height to the lozenge width. The default is 2,
      for lozenges twice as tall as they are wide. Proportions < 1 may not look very good.
     '''
     if len(tinctures) != 2:
         print("A lozengy field must have exactly 2 tinctures.")
         return Device("")
-    width = int((kScreenWidth-2*kXMargin)/num_sections)
+    size = (kScreenWidth, kScreenHeight)
+    tincture_0_surface = pygame.Surface(size, 0, 32)
+    tincture_0_surface.fill(tinctures[0])
+    tincture_1_surface = pygame.Surface(size, 0, 32)
+    tincture_1_surface.fill(tinctures[1])
+    tincture_0_mask = pygame.Surface(size, 0, 32)
+    tincture_1_mask = pygame.Surface(size, 0, 32)
+    
+    width = int((location.width)/num_sections)
     height = int(width * proportion)
     if width < 30 or height < 30:
         print("Warning: that many sections won't work well on this size of screen. Consider using fewer.")
     sections = []
     # [left, top, right, bottom]
-    start_x_points = [kXMargin, kXMargin + int(width/2), kXMargin + width, kXMargin + int(width/2)]
+    start_x_points = [location.left, location.left + int(width/2), location.left + width, location.left + int(width/2)]
     x_points = list(start_x_points)
-    y_points =[kYMargin, kYMargin - int(height/2), kYMargin, kYMargin + int(height/2)]
+    y_points =[location.top, location.top - int(height/2), location.top, location.top + int(height/2)]
     cur_tincture = 0
     while True:
         boundary = [[x_points[i], y_points[i]] for i in range(4)]
-        sections.append(FieldSection(boundary, tincture=tinctures[cur_tincture]))
+        if cur_tincture == 0:
+            pygame.draw.polygon(tincture_0_mask, kGrey, boundary)
+        else:
+            pygame.draw.polygon(tincture_1_mask, kGrey, boundary)
         x_points = [x + width for x in x_points]
-        if x_points[0] >= (kScreenWidth - kXMargin):
+        if x_points[0] >= location.right:
             x_points = start_x_points
             # use the tincture to keep track of the offset between rows
             if cur_tincture == 0:
                 x_points = [int(x - width/2) for x in x_points]
             y_points = [int(y + height/2) for y in y_points]
             cur_tincture = (cur_tincture + 1) % 2
-            if y_points[1] >= kScreenHeight:
+            if y_points[1] >= location.bottom:
+                sections.append(FieldSection(tincture_0_surface, tincture_0_mask))
+                sections.append(FieldSection(tincture_1_surface, tincture_1_mask))
                 return Device("", sections)

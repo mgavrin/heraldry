@@ -35,24 +35,21 @@ field_geometries.get_per_chevron_inverted_throughout_field([kPurpure, kArgent], 
 # Vetu
 field_geometries.get_vetu_field([kArgent, kPurpure], full_shield).display_device()
 field_geometries.get_vetu_ploye_field([kArgent, kPurpure], full_shield).display_device()
-'''
-#################### BEGIN BROKEN SECTION
 # Per pall (and inverted)
 field_geometries.get_per_pall_field([kArgent, kPurpure, kAzure], full_shield).display_device()
 field_geometries.get_per_pall_reversed_field([kPurpure, kAzure, kArgent], full_shield).display_device()
-'''
 # Gyronny
-field_geometries.get_gyronny_field(6, [kPurpure, kArgent]).display_device()
-field_geometries.get_gyronny_field(6, [kPurpure, kArgent], horizontal=True).display_device()
-field_geometries.get_gyronny_field(8, [kPurpure, kArgent]).display_device()
-field_geometries.get_gyronny_field(10, [kPurpure, kArgent]).display_device()
-field_geometries.get_gyronny_field(10, [kPurpure, kArgent], horizontal=True).display_device()
-field_geometries.get_gyronny_field(12, [kPurpure, kArgent]).display_device()
+field_geometries.get_gyronny_field(6, [kPurpure, kArgent], full_shield).display_device()
+field_geometries.get_gyronny_field(6, [kPurpure, kArgent], full_shield, horizontal=True).display_device()
+field_geometries.get_gyronny_field(8, [kPurpure, kArgent], full_shield).display_device()
+field_geometries.get_gyronny_field(10, [kPurpure, kArgent], full_shield).display_device()
+field_geometries.get_gyronny_field(10, [kPurpure, kArgent], full_shield, horizontal=True).display_device()
+field_geometries.get_gyronny_field(12, [kPurpure, kArgent], full_shield).display_device()
 # "Lots of little blocks" situations
-field_geometries.get_checky_field(8, [kPurpure, kArgent]).display_device() 
-field_geometries.get_lozengy_field(8, [kPurpure, kArgent]).display_device() 
-field_geometries.get_lozengy_field(20, [kPurpure, kArgent]).display_device() 
-field_geometries.get_lozengy_field(8, [kPurpure, kArgent], 1).display_device() 
-field_geometries.get_lozengy_field(8, [kPurpure, kArgent], 4).display_device()
-field_geometries.get_lozengy_field(8, [kPurpure, kArgent], 0.5).display_device()  
+field_geometries.get_checky_field(8, [kPurpure, kArgent], full_shield).display_device() 
+field_geometries.get_lozengy_field(8, [kPurpure, kArgent], full_shield).display_device() 
+field_geometries.get_lozengy_field(20, [kPurpure, kArgent], full_shield).display_device() 
+field_geometries.get_lozengy_field(8, [kPurpure, kArgent], full_shield, 1).display_device() 
+field_geometries.get_lozengy_field(8, [kPurpure, kArgent], full_shield, 4).display_device()
+field_geometries.get_lozengy_field(8, [kPurpure, kArgent], full_shield, 0.5).display_device()  
 '''
