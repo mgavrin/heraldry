@@ -32,9 +32,8 @@ TODO:
     * Gyronny 12
     * Checky
     * Lozengy
-  * TODO:
-    * striped, checky, lozengy, any others as partial fields for e.g. "quarterly argent and checky azure and or"
     * Fretty
+  * TODO:
     * Scaly
     * Masoned
     * Party of 6
