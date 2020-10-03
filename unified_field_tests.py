@@ -53,3 +53,4 @@ field_geometries.get_lozengy_field(8, [kPurpure, kArgent], full_shield, 1).displ
 field_geometries.get_lozengy_field(8, [kPurpure, kArgent], full_shield, 4).display_device()
 field_geometries.get_lozengy_field(8, [kPurpure, kArgent], full_shield, 0.5).display_device()  
 '''
+field_geometries.get_fretty_field(3, [kPurpure, kArgent], full_shield, True).display_device()  

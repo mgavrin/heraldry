@@ -596,8 +596,8 @@ def get_checky_field(num_sections, tinctures, location):
 def get_lozengy_field(num_sections, tinctures, location, proportion = 2):
     '''
     Returns a Device with a lozengy field.
-    num_sections: the number of individual lozenges across the top of the shield.
-     This is distinct from the total number of lozenges on the shield,
+    num_sections: the number of individual lozenges across the top of the field.
+     This is distinct from the total number of lozenges on the field.
     tinctures: A list of exactly two tinctures; the first one 
      will be used in the initial row of bottom-halves.
     location: a Rect representing the location on the screen of the lozengy
@@ -645,3 +645,164 @@ def get_lozengy_field(num_sections, tinctures, location, proportion = 2):
                 sections.append(FieldSection(tincture_0_surface, tincture_0_mask))
                 sections.append(FieldSection(tincture_1_surface, tincture_1_mask))
                 return Device("", sections)
+            
+def get_fretty_field(num_sections, tinctures, location, outlines = False):
+    '''
+    Returns a Device with a fretty field.
+    num_sections: the number of repeats across the top of the field.
+    tinctures: A list of exactly two tinctures; the first one 
+     will be used in the initial row of bottom-halves.
+    location: a Rect representing the location on the screen of the fretty
+      portion of the field. For a fretty field on the full shield, the Rect should be 
+      Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
+    outlines: if True, each bendlet will have thin sable outlines in a "woven" pattern.
+    '''
+    if len(tinctures) != 2:
+        print("A fretty field must have exactly 2 tinctures.")
+        return Device("")
+    size = (kScreenWidth, kScreenHeight)
+    tincture_0_surface = pygame.Surface(size, 0, 32)
+    tincture_0_surface.fill(tinctures[0])
+    tincture_1_surface = pygame.Surface(size, 0, 32)
+    tincture_1_surface.fill(tinctures[1])
+    tincture_0_mask = pygame.Surface(size, 0, 32)
+    tincture_1_mask = pygame.Surface(size, 0, 32)
+    tincture_1_mask.fill(kGrey)
+    # interval is the distance from the top of one square-between-frets
+    # to the one directly left or right of it.
+    interval = int(location.width/(num_sections))
+    # 0.5 because each side is half the x-width of the square,
+    # reduce to 0.3 to leave room for the frets
+    side_offset = int(math.sqrt(2)*0.3*interval)
+    # horizontal or vertical, not perpendicular, distance across a fret
+    fret_width = int(interval-2*side_offset)
+    vertical_offset = side_offset + int(fret_width/2)
+    boundary = [[location.left + int(fret_width/2), location.top],
+                [location.left + side_offset + int(fret_width/2), location.top - side_offset],
+                [location.left + 2*side_offset + int(fret_width/2), location.top],
+                [location.left + side_offset + int(fret_width/2), location.top + side_offset]]
+    row_start_boundary = boundary
+    if outlines:
+        width = 5
+        extension_length = math.ceil(int(fret_width/2))
+        extend_deasil = True
+        sinister_chief_deasil = [[location.left+int(fret_width/2), location.top],
+                                 [location.left+int(fret_width/2)+side_offset+extension_length,
+                                  location.top-side_offset-extension_length]]
+        sinister_base_deasil = [[location.left+side_offset+int(fret_width/2),
+                                 location.top-side_offset],
+                                [location.left+2*side_offset+int(fret_width/2)+extension_length,
+                                 location.top+extension_length]]
+        dexter_base_deasil = [[location.left+2*side_offset+int(fret_width/2),
+                               location.top],
+                              [location.left+side_offset+int(fret_width/2)-extension_length,
+                               location.top+side_offset+extension_length]]
+        dexter_chief_deasil = [[location.left+side_offset+int(fret_width/2),
+                                location.top+side_offset],
+                               [location.left+int(fret_width/2)-extension_length,
+                                location.top-extension_length]]
+        outline_points_deasil = [sinister_chief_deasil, sinister_base_deasil,
+                                 dexter_base_deasil, dexter_chief_deasil]
+        dexter_chief_widdershins = [[location.left-side_offset-extension_length,
+                                       location.top+extension_length],
+                                      [location.left,
+                                       location.top-side_offset]]
+        sinister_chief_widdershins = [[location.left-extension_length,
+                                      location.top-side_offset-extension_length],
+                                     [location.left+side_offset,
+                                      location.top]]
+        sinister_base_widdershins = [[location.left+side_offset+extension_length,
+                                    location.top-extension_length],
+                                   [location.left,
+                                    location.top+side_offset]]
+        dexter_base_widdershins = [[location.left+extension_length,
+                                     location.top+side_offset+extension_length],
+                                    [location.left-side_offset,
+                                     location.top]]
+        outline_points_widdershins = [sinister_chief_widdershins, sinister_base_widdershins,
+                                      dexter_base_widdershins, dexter_chief_widdershins]
+        # Separate lists so they can be modified separately
+        row_start_sinister_chief_deasil = [list(point) for point in sinister_chief_deasil]
+        row_start_sinister_base_deasil = [list(point) for point in sinister_base_deasil]
+        row_start_dexter_chief_deasil = [list(point) for point in dexter_chief_deasil]
+        row_start_dexter_base_deasil = [list(point) for point in dexter_base_deasil]
+        row_start_outline_points_deasil = [row_start_sinister_chief_deasil,
+                                           row_start_sinister_base_deasil,
+                                           row_start_dexter_base_deasil,
+                                           row_start_dexter_chief_deasil]
+        row_start_sinister_chief_widdershins = [list(point) for point in sinister_chief_widdershins]
+        row_start_sinister_base_widdershins = [list(point) for point in sinister_base_widdershins]
+        row_start_dexter_chief_widdershins = [list(point) for point in dexter_chief_widdershins]
+        row_start_dexter_base_widdershins = [list(point) for point in dexter_base_widdershins]
+        row_start_outline_points_widdershins = [row_start_sinister_chief_widdershins,
+                                                row_start_sinister_base_widdershins,
+                                                row_start_dexter_base_widdershins,
+                                                row_start_dexter_chief_widdershins]
+    while boundary[1][1] <= location.bottom:
+        if outlines:
+            if extend_deasil:
+                outline_points = list(outline_points_deasil)
+                extend_deasil = False
+            else:
+                outline_points = list(outline_points_widdershins)
+                extend_deasil = True
+        while boundary[3][0] <= location.right:
+            pygame.draw.polygon(tincture_0_mask, kGrey, boundary)
+            # Move the square to the right
+            boundary = [[i[0] + interval, i[1]] for i in boundary]
+            if outlines:
+                for line in outline_points:
+                    # Put the lines on both so they mesh nicely
+                    pygame.draw.line(tincture_0_surface, kSable, line[0], line[1], width)
+                    pygame.draw.line(tincture_1_surface, kSable, line[0], line[1], width)
+                    # Move the lines to the right
+                    line[0][0] += interval
+                    line[1][0] += interval
+        # Move the square back to the left edge
+        for i in range(len(boundary)):
+            boundary[i][0] = row_start_boundary[i][0]
+        # Offset each row by interval/2 from the previous
+        boundary = [[i[0] - int(interval/2), i[1]] for i in boundary]
+        # Move the square down
+        boundary = [[i[0], i[1] + vertical_offset] for i in boundary]
+        row_start_boundary = boundary
+        if outlines:
+            # Move the outlines back to the left edge
+            for i in range(4):
+                outline_points_deasil[i][0][0] = int(row_start_outline_points_deasil[i][0][0])
+                outline_points_deasil[i][1][0] = int(row_start_outline_points_deasil[i][1][0])
+                outline_points_widdershins[i][0][0] = int(row_start_outline_points_widdershins[i][0][0])
+                outline_points_widdershins[i][1][0] = int(row_start_outline_points_widdershins[i][1][0])
+            for line in outline_points_deasil:
+                for point in line:
+                    # Move the outlines down
+                    point[1] += vertical_offset
+            for line in outline_points_widdershins:
+                for point in line:
+                    # Move the outlines down
+                    point[1] += vertical_offset
+            row_start_sinister_chief_deasil = [list(point) for point in sinister_chief_deasil]
+            row_start_sinister_base_deasil = [list(point) for point in sinister_base_deasil]
+            row_start_dexter_chief_deasil = [list(point) for point in dexter_chief_deasil]
+            row_start_dexter_base_deasil = [list(point) for point in dexter_base_deasil]
+            row_start_outline_points_deasil = [row_start_sinister_chief_deasil,
+                                               row_start_sinister_base_deasil,
+                                               row_start_dexter_base_deasil,
+                                               row_start_dexter_chief_deasil]
+            row_start_sinister_chief_widdershins = [list(point) for point in sinister_chief_widdershins]
+            row_start_sinister_base_widdershins = [list(point) for point in sinister_base_widdershins]
+            row_start_dexter_chief_widdershins = [list(point) for point in dexter_chief_widdershins]
+            row_start_dexter_base_widdershins = [list(point) for point in dexter_base_widdershins]
+            row_start_outline_points_widdershins = [row_start_sinister_chief_widdershins,
+                                                    row_start_sinister_base_widdershins,
+                                                    row_start_dexter_base_widdershins,
+                                                    row_start_dexter_chief_widdershins]
+                
+
+    # Reverse order because the frets are actually being modeled as the negative space
+    # and the squares between them as the positive space.
+    sections = [FieldSection(tincture_1_surface, tincture_1_mask),
+                FieldSection(tincture_0_surface, tincture_0_mask)]
+    return Device("", sections)
+    
+
