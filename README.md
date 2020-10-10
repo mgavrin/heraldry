@@ -1,6 +1,7 @@
 Resources for generating SCA armory art.
 
 TODO:
+* Reduce mask proliferation in striped fields to speed up rendering of e.g. paly
 * type hints
 
 * Field divisions
@@ -34,7 +35,6 @@ TODO:
     * Lozengy
     * Fretty
   * TODO:
-    * Helper func to trim a mask to a rect
     * Scaly
     * Masoned
     * Party of 6

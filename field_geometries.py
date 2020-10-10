@@ -38,7 +38,7 @@ def get_plain_field(tincture, location):
     surface.fill(tincture)
     mask = pygame.Surface(size, 0, 32)
     pygame.draw.polygon(mask, kGrey, boundary)
-    return FieldSection(surface, mask)
+    return Device("", [FieldSection(surface, mask)])
 
 def get_paly_boundaries(n, location):
     '''
@@ -182,8 +182,7 @@ def get_chevronelly_inverted_boundaries(n, location):
 
 def get_striped_field(num_sections, tinctures, direction, location):
     '''
-    Returns a list of FieldSection objects representing a portion of the field 
-      with one or more parallel lines of division.
+    Returns a Device with a field containing one or more parallel lines of division.
     num_sections: the number of sections.
     tinctures: a list of tincture objects, e.g. [kVert, kArgent], dexter chief first.
     direction: a string indicating direction.
@@ -202,7 +201,7 @@ def get_striped_field(num_sections, tinctures, direction, location):
                   "chevronelly": get_chevronelly_boundaries,
                   "per chevron inverted": get_chevronelly_inverted_boundaries,
                   "chevronelly inverted": get_chevronelly_inverted_boundaries}
-    fieldsections = []
+    field_sections = []
     boundaries = directions[direction](num_sections, location)
     for i in range(num_sections):
         size = (kScreenWidth, kScreenHeight)
@@ -214,10 +213,9 @@ def get_striped_field(num_sections, tinctures, direction, location):
         mask.set_clip(location)
         pygame.draw.polygon(mask, kGrey, boundaries[i])
         mask = trim_mask(mask, location)
-        fieldsections.append(FieldSection(surface, mask))
-    return fieldsections
+        field_sections.append(FieldSection(surface, mask))
+    return Device("", field_sections)
 
-# CURRENTLY BROKEN
 def get_quarterly_field(tinctures, location):
     '''
     Returns a device object with a quarterly field.

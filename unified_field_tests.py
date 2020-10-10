@@ -7,22 +7,21 @@ constant_definitions =open("constants.py")
 exec(constant_definitions.read())
 full_shield = Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin)
 small_square = Rect(300, 300, 200, 200)
-'''
 # Plain field
-Device("", [field_geometries.get_plain_field(kPurpure, full_shield)]).display_device()
+field_geometries.get_plain_field(kPurpure, full_shield).display_device()
 # Two-color parallel sections
-Device("", field_geometries.get_striped_field(2, [kPurpure, kArgent], "per pale", full_shield)).display_device()
-Device("", field_geometries.get_striped_field(7, [kPurpure, kArgent], "paly", full_shield)).display_device()
-Device("", field_geometries.get_striped_field(2, [kPurpure, kArgent], "per fess", full_shield)).display_device()
-Device("", field_geometries.get_striped_field(7, [kPurpure, kArgent], "barry", full_shield)).display_device()
-Device("", field_geometries.get_striped_field(2, [kPurpure, kArgent], "per bend", full_shield)).display_device()
-Device("", field_geometries.get_striped_field(7, [kPurpure, kArgent], "bendy", full_shield)).display_device()
-Device("", field_geometries.get_striped_field(2, [kPurpure, kArgent], "per bend sinister", full_shield)).display_device()
-Device("", field_geometries.get_striped_field(7, [kPurpure, kArgent], "bendy sinister", full_shield)).display_device()
-Device("", field_geometries.get_striped_field(2, [kPurpure, kArgent], "per chevron", full_shield)).display_device()
-Device("", field_geometries.get_striped_field(7, [kPurpure, kArgent], "chevronelly", full_shield)).display_device()
-Device("", field_geometries.get_striped_field(2, [kPurpure, kArgent], "per chevron inverted", full_shield)).display_device()
-Device("", field_geometries.get_striped_field(7, [kPurpure, kArgent], "chevronelly inverted", full_shield)).display_device()
+field_geometries.get_striped_field(2, [kPurpure, kArgent], "per pale", full_shield).display_device()
+field_geometries.get_striped_field(7, [kPurpure, kArgent], "paly", full_shield).display_device()
+field_geometries.get_striped_field(2, [kPurpure, kArgent], "per fess", full_shield).display_device()
+field_geometries.get_striped_field(7, [kPurpure, kArgent], "barry", full_shield).display_device()
+field_geometries.get_striped_field(2, [kPurpure, kArgent], "per bend", full_shield).display_device()
+field_geometries.get_striped_field(7, [kPurpure, kArgent], "bendy", full_shield).display_device()
+field_geometries.get_striped_field(2, [kPurpure, kArgent], "per bend sinister", full_shield).display_device()
+field_geometries.get_striped_field(7, [kPurpure, kArgent], "bendy sinister", full_shield).display_device()
+field_geometries.get_striped_field(2, [kPurpure, kArgent], "per chevron", full_shield).display_device()
+field_geometries.get_striped_field(7, [kPurpure, kArgent], "chevronelly", full_shield).display_device()
+field_geometries.get_striped_field(2, [kPurpure, kArgent], "per chevron inverted", full_shield).display_device()
+field_geometries.get_striped_field(7, [kPurpure, kArgent], "chevronelly inverted", full_shield).display_device()
 # Quarterly
 field_geometries.get_quarterly_field([kArgent, kPurpure], full_shield).display_device()
 # Canton
@@ -52,8 +51,7 @@ field_geometries.get_lozengy_field(20, [kPurpure, kArgent], full_shield).display
 field_geometries.get_lozengy_field(8, [kPurpure, kArgent], full_shield, 1).display_device() 
 field_geometries.get_lozengy_field(8, [kPurpure, kArgent], full_shield, 4).display_device()
 field_geometries.get_lozengy_field(8, [kPurpure, kArgent], full_shield, 0.5).display_device()  
-'''
 field_geometries.get_fretty_field(3, [kAzure, kOr], small_square, True).display_device()  
 '''
-field_geometries.get_scaly_field(3, [kPurpure, kArgent], full_shield, True).display_device()  
+field_geometries.get_scaly_field(3, [kPurpure, kArgent], full_shield).display_device()  
 '''

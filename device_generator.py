@@ -69,6 +69,10 @@ class Device:
                     pygame.display.quit()
                     return
 
+    def merge(self, other):
+        self.field_sections+=other.field_sections
+        self.charge_groups+=other.charge_groups
+
 class FieldSection:
     def __init__(self, surface, mask):
         '''
