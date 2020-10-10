@@ -3,6 +3,25 @@ from device_generator import *
 constant_definitions =open("constants.py")
 exec(constant_definitions.read())
 
+def trim_mask(surface, location):
+    '''
+    Removes everything from the provided surface that falls outside the
+      provided rectangle.
+    surface: a pygame Surface.
+    location: a pygame Rect specifying the area to trim to.
+    returns: a new Surface that has been trimmed to be empty outside the
+      location Rect.
+    '''
+    surface.lock()
+    new_surface=pygame.Surface(surface.get_size())
+    new_surface.lock()
+    for x in range(location.left, location.right):
+        for y in range(location.top, location.bottom):
+            new_surface.set_at((x,y), surface.get_at((x,y)))
+    surface.unlock()
+    new_surface.unlock()
+    return new_surface
+
 def get_plain_field(tincture, location):
     '''
     Returns a FieldSection with a single tincture.
@@ -194,6 +213,7 @@ def get_striped_field(num_sections, tinctures, direction, location):
         # don't let them
         mask.set_clip(location)
         pygame.draw.polygon(mask, kGrey, boundaries[i])
+        mask = trim_mask(mask, location)
         fieldsections.append(FieldSection(surface, mask))
     return fieldsections
 
@@ -239,6 +259,7 @@ def get_quarterly_field(tinctures, location):
         surface.fill(tinctures[i % len(tinctures)])
         mask = pygame.Surface(size, 0, 32)
         pygame.draw.polygon(mask, kGrey, quarters[i])
+        mask = trim_mask(mask, location)
         field_sections.append(FieldSection(surface, mask))
     return Device("", field_sections)
 
@@ -278,6 +299,7 @@ def get_per_saltire_field(tinctures, location):
         surface.fill(tinctures[i % len(tinctures)])
         mask = pygame.Surface(size, 0, 32)
         pygame.draw.polygon(mask, kGrey, boundaries[i])
+        mask = trim_mask(mask, location)
         field_sections.append(FieldSection(surface, mask))
     return Device("", field_sections)
 
@@ -306,12 +328,14 @@ def get_per_chevron_throughout_field(tinctures, location):
     chief_surface.fill(tinctures[0])
     chief_mask = pygame.Surface(size, 0, 32)
     pygame.draw.polygon(chief_mask, kGrey, chief_boundary)
+    chief_mask = trim_mask(chief_mask, location)
     chief_section = FieldSection(chief_surface, chief_mask)
     
     base_surface = pygame.Surface(size, 0, 32)
     base_surface.fill(tinctures[1])
     base_mask = pygame.Surface(size, 0, 32)
     pygame.draw.polygon(base_mask, kGrey, base_boundary)
+    base_mask = trim_mask(base_mask, location)
     base_section = FieldSection(base_surface, base_mask)
     return Device("", [chief_section, base_section])
     
@@ -341,12 +365,14 @@ def get_per_chevron_inverted_throughout_field(tinctures, location):
     chief_surface.fill(tinctures[0])
     chief_mask = pygame.Surface(size, 0, 32)
     pygame.draw.polygon(chief_mask, kGrey, chief_boundary)
+    chief_mask = trim_mask(chief_mask, location)
     chief_section = FieldSection(chief_surface, chief_mask)
     
     base_surface = pygame.Surface(size, 0, 32)
     base_surface.fill(tinctures[1])
     base_mask = pygame.Surface(size, 0, 32)
     pygame.draw.polygon(base_mask, kGrey, base_boundary)
+    base_mask = trim_mask(base_mask, location)
     base_section = FieldSection(base_surface, base_mask)
     return Device("", [chief_section, base_section])
 
@@ -374,12 +400,14 @@ def get_vetu_field(tinctures, location):
     outer_surface.fill(tinctures[0])
     outer_mask = pygame.Surface(size, 0, 32)
     pygame.draw.polygon(outer_mask, kGrey, outer_boundary)
+    outer_mask = trim_mask(outer_mask, location)
     outer_section = FieldSection(outer_surface, outer_mask)
     
     inner_surface = pygame.Surface(size, 0, 32)
     inner_surface.fill(tinctures[1])
     inner_mask = pygame.Surface(size, 0, 32)
     pygame.draw.polygon(inner_mask, kGrey, inner_boundary)
+    inner_mask = trim_mask(inner_mask, location)
     inner_section = FieldSection(inner_surface, inner_mask)
     return Device("", [outer_section, inner_section])
 
@@ -406,12 +434,14 @@ def get_vetu_ploye_field(tinctures, location):
         pygame.image.load(os.path.join("art", "starburst_mask.png")),
         (location.width, location.height))
     outer_mask.blit(outer_mask_scaled, (location.left, location.top))
+    outer_mask = trim_mask(outer_mask, location)
     outer_section = FieldSection(outer_surface, outer_mask)
 
     inner_surface = pygame.Surface(size, 0, 32)
     inner_surface.fill(tinctures[1])
     inner_mask = pygame.Surface(size, 0, 32)
     inner_mask.fill(kGrey)
+    inner_mask = trim_mask(inner_mask, location)
     inner_section = FieldSection(inner_surface, inner_mask)
     # Order is important here: inner_section is just a solid color with no shape,
     # so outer_section needs to be on top.
@@ -452,6 +482,9 @@ def get_per_pall_field(tinctures, location):
     sinister_mask = pygame.Surface(size, 0, 32)
     pygame.draw.polygon(sinister_mask, kGrey, sinister_boundary)
     
+    chief_mask = trim_mask(chief_mask, location)
+    dexter_mask = trim_mask(dexter_mask, location)
+    sinister_mask = trim_mask(sinister_mask, location)
     chief_section = FieldSection(chief_surface, chief_mask)
     dexter_section = FieldSection(dexter_surface, dexter_mask)
     sinister_section = FieldSection(sinister_surface, sinister_mask)
@@ -493,6 +526,9 @@ def get_per_pall_reversed_field(tinctures, location):
     sinister_mask = pygame.Surface(size, 0, 32)
     pygame.draw.polygon(sinister_mask, kGrey, sinister_boundary)
     
+    base_mask = trim_mask(base_mask, location)
+    dexter_mask = trim_mask(dexter_mask, location)
+    sinister_mask = trim_mask(sinister_mask, location)
     base_section = FieldSection(base_surface, base_mask)
     dexter_section = FieldSection(dexter_surface, dexter_mask)
     sinister_section = FieldSection(sinister_surface, sinister_mask)
@@ -541,6 +577,7 @@ def get_gyronny_field(num_sections, tinctures, location, horizontal=False):
         surface.fill(tinctures[(i+1) % len(tinctures)])
         mask = pygame.Surface(size, 0, 32)
         pygame.draw.polygon(mask, kGrey, boundary)
+        mask = trim_mask(mask, location)
         sections.append(FieldSection(surface, mask))
     return Device("", sections)
 
@@ -589,6 +626,8 @@ def get_checky_field(num_sections, tinctures, location):
             cur_tincture = next_row_start_tincture
             next_row_start_tincture = (next_row_start_tincture + 1) % 2
         if cur_y >= location.bottom:
+            tincture_0_mask = trim_mask(tincture_0_mask, location)
+            tincture_1_mask = trim_mask(tincture_1_mask, location)
             sections.append(FieldSection(tincture_0_surface, tincture_0_mask))
             sections.append(FieldSection(tincture_1_surface, tincture_1_mask))
             return Device("", sections)
@@ -801,6 +840,8 @@ def get_fretty_field(num_sections, tinctures, location, outlines = False):
 
     # Reverse order because the frets are actually being modeled as the negative space
     # and the squares between them as the positive space.
+    tincture_0_mask = trim_mask(tincture_0_mask, location)
+    tincture_1_mask = trim_mask(tincture_1_mask, location)
     sections = [FieldSection(tincture_1_surface, tincture_1_mask),
                 FieldSection(tincture_0_surface, tincture_0_mask)]
     return Device("", sections)

@@ -34,6 +34,7 @@ TODO:
     * Lozengy
     * Fretty
   * TODO:
+    * Helper func to trim a mask to a rect
     * Scaly
     * Masoned
     * Party of 6
