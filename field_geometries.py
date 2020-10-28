@@ -203,16 +203,25 @@ def get_striped_field(num_sections, tinctures, direction, location):
                   "chevronelly inverted": get_chevronelly_inverted_boundaries}
     field_sections = []
     boundaries = directions[direction](num_sections, location)
-    for i in range(num_sections):
-        size = (kScreenWidth, kScreenHeight)
+    size = (kScreenWidth, kScreenHeight)
+    # One surface and mask per tincture
+    masks_by_tincture = {}
+    for tincture in tinctures:
         surface = pygame.Surface(size, 0, 32)
-        surface.fill(tinctures[i % len(tinctures)])
+        surface.fill(tincture)
         mask = pygame.Surface(size, 0, 32)
+        masks_by_tincture[tincture] = (surface, mask)
+        
+    for i in range(num_sections):
+        tincture = tinctures[i % len(tinctures)]
+        (surface, mask) = masks_by_tincture[tincture]
         # If the stripes would extend outside the location rect,
         # don't let them
         mask.set_clip(location)
         pygame.draw.polygon(mask, kGrey, boundaries[i])
         mask = trim_mask(mask, location)
+
+    for (surface, mask) in masks_by_tincture.values():
         field_sections.append(FieldSection(surface, mask))
     return Device("", field_sections)
 

@@ -21,7 +21,7 @@ dexter_half_device.display_device()
 
 print("Barry 13 gules and argent, a canton azure")
 canton = Rect(kXMargin, kYMargin,
-              int(0.5*(kScreenWidth-2*kXMargin)), int(5/13*full_shield.height))
+              int(0.5*(kScreenWidth-2*kXMargin)), int(7/13*full_shield.height))
 bottom_layer = field_geometries.get_striped_field(13, [kGules, kArgent], "barry", full_shield)
 top_layer = field_geometries.get_plain_field(kAzure, canton)
 bottom_layer.merge(top_layer) #order matters here
