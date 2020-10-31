@@ -852,5 +852,44 @@ def get_fretty_field(num_sections, tinctures, location, outlines = False):
     sections = [FieldSection(tincture_1_surface, tincture_1_mask),
                 FieldSection(tincture_0_surface, tincture_0_mask)]
     return Device("", sections)
-    
+            
+def get_scaly_field(num_sections, tinctures, location):
+    '''
+    Returns a Device with a scaly field.
+    num_sections: the number of repeats across the top of the field.
+    tinctures: A list of exactly two tinctures; the first one 
+     will be used for the background and the second for the arcs.
+    location: a Rect representing the location on the screen of the scaly
+      portion of the field. For a scaly field on the full shield, the Rect should be 
+      Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
+    '''
+    if len(tinctures) != 2:
+        print("A fretty field must have exactly 2 tinctures.")
+        return Device("")
+    size = (kScreenWidth, kScreenHeight)
+    surface = pygame.Surface(size, 0, 32)
+    mask = pygame.Surface(size, 0, 32)
+    # no masking, just exploit blit order on the surface
+    # to get out of cutting off the arcs at the right place
+    mask.fill(kGrey)
+    radius = int(location.width/num_sections/2)
+    # go from base to chief so chief scales are "on top of" base scales
+    center = [location.left, location.bottom]
+    offset_next_row = True
+    while center[1] >= location.top-radius:
+        while center[0] <= location.right:
+            pygame.draw.circle(surface, tinctures[0], center, radius)
+            # 2 is the width of the unfilled circular arc
+            pygame.draw.circle(surface, tinctures[1], center, radius, 2)
+            center[0] += radius*2
+        center[0] = location.left
+        if offset_next_row:
+            center[0] += radius
+        offset_next_row = not offset_next_row
+        center[1] -= radius
 
+
+
+
+    sections = [FieldSection(surface, mask)]
+    return Device("", sections)
