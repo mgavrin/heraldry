@@ -871,7 +871,10 @@ def get_scaly_field(num_sections, tinctures, location):
     mask = pygame.Surface(size, 0, 32)
     # no masking, just exploit blit order on the surface
     # to get out of cutting off the arcs at the right place
-    mask.fill(kGrey)
+    pygame.draw.polygon(mask, kGrey, [(location.left, location.top),
+                                      (location.left, location.bottom),
+                                      (location.right, location.bottom),
+                                      (location.right, location.top)])
     radius = int(location.width/num_sections/2)
     # go from base to chief so chief scales are "on top of" base scales
     center = [location.left, location.bottom]
@@ -887,9 +890,6 @@ def get_scaly_field(num_sections, tinctures, location):
             center[0] += radius
         offset_next_row = not offset_next_row
         center[1] -= radius
-
-
-
-
+    # no need to trim the mask, since we're not blitting on it
     sections = [FieldSection(surface, mask)]
     return Device("", sections)

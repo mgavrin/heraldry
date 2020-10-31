@@ -34,8 +34,8 @@ TODO:
     * Checky
     * Lozengy
     * Fretty
-  * TODO:
     * Scaly
+  * TODO:
     * Masoned
     * Party of 6
     * Gyronny arrondy
