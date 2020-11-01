@@ -864,7 +864,7 @@ def get_scaly_field(num_sections, tinctures, location):
       Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
     '''
     if len(tinctures) != 2:
-        print("A fretty field must have exactly 2 tinctures.")
+        print("A scalyk field must have exactly 2 tinctures.")
         return Device("")
     size = (kScreenWidth, kScreenHeight)
     surface = pygame.Surface(size, 0, 32)
@@ -890,6 +890,57 @@ def get_scaly_field(num_sections, tinctures, location):
             center[0] += radius
         offset_next_row = not offset_next_row
         center[1] -= radius
-    # no need to trim the mask, since we're not blitting on it
+    # no need to trim the mask, since we're not blitting
+    # anything other than the location Rect on it
+    sections = [FieldSection(surface, mask)]
+    return Device("", sections)
+
+
+            
+def get_masoned_field(num_sections_x, num_sections_y, tinctures, location,
+                      line_width = 5):
+    '''
+    Returns a Device with a masoned field.
+    num_sections_x: the number of "bricks" in each row.
+    num_sections_y: the number of rows.
+    tinctures: A list of exactly two tinctures; the first one 
+     will be used for the "bricks" and the second for the "mortar".
+    location: a Rect representing the location on the screen of the masoned
+      portion of the field. For a masoned field on the full shield, the Rect should be 
+      Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
+    line_width: the width of the "mortar" lines in pixels. Optional.
+    '''
+    if len(tinctures) != 2:
+        print("A masoned field must have exactly 2 tinctures.")
+        return Device("")
+    size = (kScreenWidth, kScreenHeight)
+    surface = pygame.Surface(size, 0, 32)
+    surface.fill(tinctures[0])
+    mask = pygame.Surface(size, 0, 32)
+    # no complicated masking, just stick everything on the surface
+    # and use the mask to trim to the location area
+    pygame.draw.polygon(mask, kGrey, [(location.left, location.top),
+                                      (location.left, location.bottom),
+                                      (location.right, location.bottom),
+                                      (location.right, location.top)])
+    x_interval = int(location.width/num_sections_x)
+    y_interval = int(location.height/num_sections_y)
+    x = location.left
+    y_top = location.top
+    offset_next_row = True
+    while y_top <= location.bottom:
+        while x <= location.right:
+            pygame.draw.line(surface, tinctures[1], (x, y_top),
+                             (x, y_top + y_interval), line_width)
+            x += x_interval
+        pygame.draw.line(surface, tinctures[1], (location.left, y_top),
+                         (location.right, y_top), line_width)
+        y_top += y_interval
+        x = location.left
+        if offset_next_row:
+            x += int(x_interval/2)
+        offset_next_row = not offset_next_row
+    # no need to trim the mask, since we're not blitting
+    # anything other than the location Rect on it
     sections = [FieldSection(surface, mask)]
     return Device("", sections)
