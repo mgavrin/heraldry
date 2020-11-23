@@ -184,7 +184,7 @@ def get_striped_field(num_sections, tinctures, direction, location):
     '''
     Returns a Device with a field containing one or more parallel lines of division.
     num_sections: the number of sections.
-    tinctures: a list of tincture objects, e.g. [kVert, kArgent], dexter chief first.
+    tinctures: a list of tincture objects, e.g. [kVert, kArgent], dexter chief zeroth.
     direction: a string indicating direction.
       Must be one of the keys in the dict below.
     location: a Rect representing the location on the screen of the striped portion of the field.
@@ -546,7 +546,7 @@ def get_gyronny_field(num_sections, tinctures, location, horizontal=False):
     Returns a Device with a gyronny field of num_sections sections.
     num_sections: the number of sections. 6, 8, 10, and 12 are supported.
      4 is just quarterly or per saltire. 
-    tinctures: A list of exactly two tinctures; the first one 
+    tinctures: A list of exactly two tinctures; the zeroth one 
      will be used in the dexter chief corner.
     location: a Rect representing the location on the screen of the gyronny
       portion of the field. For a gyronny field on the full shield, the Rect should be 
@@ -594,7 +594,7 @@ def get_checky_field(num_sections, tinctures, location):
     num_sections: the number of individual boxes across the top of the shield.
      This is distinct from the total number of boxes on the shield and may be less
      than the number of boxes in the longest vertical column.
-    tinctures: A list of exactly two tinctures; the first one 
+    tinctures: A list of exactly two tinctures; the zeroth one 
      will be used in the dexter chief corner.
     location: a Rect representing the location on the screen of the lozengy
       portion of the field. For a lozengy field on the full shield, the Rect should be 
@@ -644,7 +644,7 @@ def get_lozengy_field(num_sections, tinctures, location, proportion = 2):
     Returns a Device with a lozengy field.
     num_sections: the number of individual lozenges across the top of the field.
      This is distinct from the total number of lozenges on the field.
-    tinctures: A list of exactly two tinctures; the first one 
+    tinctures: A list of exactly two tinctures; the zeroth one 
      will be used in the initial row of bottom-halves.
     location: a Rect representing the location on the screen of the lozengy
       portion of the field. For a lozengy field on the full shield, the Rect should be 
@@ -696,7 +696,7 @@ def get_fretty_field(num_sections, tinctures, location, outlines = False):
     '''
     Returns a Device with a fretty field.
     num_sections: the number of repeats across the top of the field.
-    tinctures: A list of exactly two tinctures; the first one 
+    tinctures: A list of exactly two tinctures; the zeroth one 
      will be used in the initial row of bottom-halves.
     location: a Rect representing the location on the screen of the fretty
       portion of the field. For a fretty field on the full shield, the Rect should be 
@@ -857,7 +857,7 @@ def get_scaly_field(num_sections, tinctures, location):
     '''
     Returns a Device with a scaly field.
     num_sections: the number of repeats across the top of the field.
-    tinctures: A list of exactly two tinctures; the first one 
+    tinctures: A list of exactly two tinctures; the zeroth one 
      will be used for the background and the second for the arcs.
     location: a Rect representing the location on the screen of the scaly
       portion of the field. For a scaly field on the full shield, the Rect should be 
@@ -895,15 +895,13 @@ def get_scaly_field(num_sections, tinctures, location):
     sections = [FieldSection(surface, mask)]
     return Device("", sections)
 
-
-            
 def get_masoned_field(num_sections_x, num_sections_y, tinctures, location,
                       line_width = 5):
     '''
     Returns a Device with a masoned field.
     num_sections_x: the number of "bricks" in each row.
     num_sections_y: the number of rows.
-    tinctures: A list of exactly two tinctures; the first one 
+    tinctures: A list of exactly two tinctures; the zeroth one 
      will be used for the "bricks" and the second for the "mortar".
     location: a Rect representing the location on the screen of the masoned
       portion of the field. For a masoned field on the full shield, the Rect should be 
@@ -940,6 +938,60 @@ def get_masoned_field(num_sections_x, num_sections_y, tinctures, location,
         if offset_next_row:
             x += int(x_interval/2)
         offset_next_row = not offset_next_row
+    # no need to trim the mask, since we're not blitting
+    # anything other than the location Rect on it
+    sections = [FieldSection(surface, mask)]
+    return Device("", sections)
+
+def get_party_of_six_field(tinctures, location):
+    '''
+    Returns a Device with a party of 6 field.
+    tinctures: A list of exactly two tinctures; the zeroth one 
+     will be used for the dexter chief corner.
+    location: a Rect representing the location on the screen of the party of 6
+      portion of the field. For a party of 6 field on the full shield, the Rect should be 
+      Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
+    '''
+    if len(tinctures) != 2:
+        print("A party of 6 field must have exactly 2 tinctures.")
+        return Device("")
+    size = (kScreenWidth, kScreenHeight)
+    surface = pygame.Surface(size, 0, 32)
+    mask = pygame.Surface(size, 0, 32)
+    # no complicated masking, just stick everything on the surface
+    # and use the mask to trim to the location area
+    one_third_x = location.left + int(location.width/3)
+    two_thirds_x = location.left + int(2*location.width/3)
+    half_y = location.top + int(location.height/2)
+    pygame.draw.polygon(surface, tinctures[0], [(location.left, location.top),
+                                      (location.left, half_y),
+                                      (one_third_x, half_y),
+                                      (one_third_x, location.top)])
+    pygame.draw.polygon(surface, tinctures[1], [(location.left, half_y),
+                                      (location.left, location.bottom),
+                                      (one_third_x, location.bottom),
+                                      (one_third_x, half_y)])
+    pygame.draw.polygon(surface, tinctures[1], [(one_third_x, location.top),
+                                      (one_third_x, half_y),
+                                      (two_thirds_x, half_y),
+                                      (two_thirds_x, location.top)])
+    pygame.draw.polygon(surface, tinctures[0], [(one_third_x, half_y),
+                                      (one_third_x, location.bottom),
+                                      (two_thirds_x, location.bottom),
+                                      (two_thirds_x, half_y)])
+    pygame.draw.polygon(surface, tinctures[0], [(two_thirds_x, location.top),
+                                      (two_thirds_x, half_y),
+                                      (location.right, half_y),
+                                      (location.right, location.top)])
+    pygame.draw.polygon(surface, tinctures[1], [(two_thirds_x, half_y),
+                                      (two_thirds_x, location.bottom),
+                                      (location.right, location.bottom),
+                                      (location.right, half_y)])
+    
+    pygame.draw.polygon(mask, kGrey, [(location.left, location.top),
+                                      (location.left, location.bottom),
+                                      (location.right, location.bottom),
+                                      (location.right, location.top)])
     # no need to trim the mask, since we're not blitting
     # anything other than the location Rect on it
     sections = [FieldSection(surface, mask)]
