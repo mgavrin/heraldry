@@ -7,8 +7,8 @@ constant_definitions =open("constants.py")
 exec(constant_definitions.read())
 full_shield = Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin)
 small_square = Rect(300, 300, 200, 200)
-'''
 # Plain field
+'''
 field_geometries.get_plain_field(kPurpure, full_shield).display_device()
 # Two-color parallel sections
 field_geometries.get_striped_field(2, [kPurpure, kArgent], "per pale", full_shield).display_device()
@@ -51,9 +51,9 @@ field_geometries.get_lozengy_field(8, [kPurpure, kArgent], full_shield).display_
 field_geometries.get_lozengy_field(20, [kPurpure, kArgent], full_shield).display_device() 
 field_geometries.get_lozengy_field(8, [kPurpure, kArgent], full_shield, 1).display_device() 
 field_geometries.get_lozengy_field(8, [kPurpure, kArgent], full_shield, 4).display_device()
-field_geometries.get_lozengy_field(8, [kPurpure, kArgent], full_shield, 0.5).display_device()  
-field_geometries.get_fretty_field(3, [kAzure, kOr], small_square, True).display_device()  
+field_geometries.get_lozengy_field(8, [kPurpure, kArgent], full_shield, 0.5).display_device()
+'''
+field_geometries.get_fretty_field(3, [kAzure, kOr], full_shield, True).display_device()  
 field_geometries.get_scaly_field(7, [kPurpure, kArgent], full_shield).display_device()  
 field_geometries.get_masoned_field(7, 12, [kPurpure, kArgent], full_shield).display_device()
-'''
 field_geometries.get_party_of_six_field([kPurpure, kArgent], full_shield).display_device()

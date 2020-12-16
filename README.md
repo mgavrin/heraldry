@@ -40,12 +40,11 @@ TODO:
     * Gyronny arrondy
 
 * Complex lines of division
-  * Assemble sets of points/curves for complex lines
-  * Treat a complex line of division as a rectangle with the line through it; colorswap and rotate as necessary
   * Supported:
-  * TODO:
     * Indented
+  * TODO:
     * Rayonny
+      * Two arcs per side-of-ray
     * Embattled
       * counter-embattled
       * embattled-counter-embattled

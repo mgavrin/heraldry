@@ -284,7 +284,7 @@ def get_per_saltire_field(tinctures, location):
       Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
     '''
     if len(tinctures) != 2 and len(tinctures) != 4:
-        print("Quarterly fields can't have", len(tinctures), "tinctures")
+        print("Per saltire fields can't have", len(tinctures), "tinctures")
         return Device("")
     chief_boundary =    [[location.left, location.top],
                          [location.right, location.top],
