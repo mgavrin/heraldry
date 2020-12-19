@@ -38,7 +38,7 @@ def indented(tinctures, location, orientation,
     if len(tinctures) != 2:
         print ("An line of division must have two tinctures.")
         return Device("")
-    print("location y boundaries:", location.top, location.bottom)
+    print("location is", location.top, location.left)
     if orientation == Orientation.FESSWISE:
         increment = int(location.width/num_points/2)
         x_points = range(location.left, location.right, increment)
@@ -54,7 +54,19 @@ def indented(tinctures, location, orientation,
                            FieldSection(surface_1, mask_1)])
         
     elif orientation == Orientation.PALEWISE:
-        print ("palewise")
+        print(location.top, location.bottom)
+        increment = int(location.height/num_points/2)
+        y_points = range(location.top, location.bottom, increment)
+        x_points = [(location.left + (location.width * (i%2)))
+                    for i in range(len(y_points))]
+        points = [[x_points[i], y_points[i]] for i in range(len(x_points))]
+        chief_boundary = [[location.left, location.top]]+ points
+        base_boundary = points + [[location.right, location.bottom],
+                                  [location.right, location.top]]
+        pygame.draw.polygon(mask_0, kGrey, chief_boundary)
+        pygame.draw.polygon(mask_1, kGrey, base_boundary)
+        return Device("", [FieldSection(surface_0, mask_0),
+                           FieldSection(surface_1, mask_1)])
     elif orientation == Orientation.BENDWISE:
         print ("bendwise")
     elif orientation == Orientation.BENDWISE_SINISTER:

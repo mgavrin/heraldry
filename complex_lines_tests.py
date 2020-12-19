@@ -16,3 +16,10 @@ field = field_geometries.get_striped_field(2, [kPurpure, kArgent], "per fess", f
 line = lines_of_division.indented([kPurpure, kArgent], fesswise_line, lines_of_division.Orientation.FESSWISE)
 field.merge(line)
 field.display_device()
+
+palewise_line = Rect(int((kScreenWidth-band_width)*0.5), kYMargin,
+                     band_width, kShieldBottom-kYMargin)
+field = field_geometries.get_striped_field(2, [kPurpure, kArgent], "per pale", full_shield)
+line = lines_of_division.indented([kPurpure, kArgent], palewise_line, lines_of_division.Orientation.PALEWISE)
+field.merge(line)
+field.display_device()
