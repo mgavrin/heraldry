@@ -92,7 +92,7 @@ TODO:
   * Canton
   * Gyron
   * Orle
-  * Double tressure
+  * Double/triple tressure
   * Tierce
   * Flaunches
   * Cotised
