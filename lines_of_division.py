@@ -10,6 +10,14 @@ class Orientation(Enum):
     BENDWISE = 135
     BENDWISE_SINISTER = 45
 
+def alternator(x):
+    '''
+    Helper function for points alternating opposite sides of a line of division.
+    '''
+    if x%2 == 0:
+        return 1
+    return -1
+
 def indented(tinctures, location, orientation,
              num_points = 7, depth_pixels = 30):
     '''
@@ -36,9 +44,8 @@ def indented(tinctures, location, orientation,
     surface_1.fill(tinctures[1])
     mask_1 = pygame.Surface(size, 0, 32)
     if len(tinctures) != 2:
-        print ("An line of division must have two tinctures.")
+        print ("A line of division must have two tinctures.")
         return Device("")
-    print("location is", location.top, location.left)
     if orientation == Orientation.FESSWISE:
         increment = int(location.width/num_points/2)
         x_points = range(location.left, location.right, increment)
@@ -48,13 +55,8 @@ def indented(tinctures, location, orientation,
         chief_boundary = [[location.right, location.top]]+ points
         base_boundary = points + [[location.right, location.bottom],
                                   [location.left, location.bottom]]
-        pygame.draw.polygon(mask_0, kGrey, chief_boundary)
-        pygame.draw.polygon(mask_1, kGrey, base_boundary)
-        return Device("", [FieldSection(surface_0, mask_0),
-                           FieldSection(surface_1, mask_1)])
         
     elif orientation == Orientation.PALEWISE:
-        print(location.top, location.bottom)
         increment = int(location.height/num_points/2)
         y_points = range(location.top, location.bottom, increment)
         x_points = [(location.left + (location.width * (i%2)))
@@ -63,13 +65,56 @@ def indented(tinctures, location, orientation,
         chief_boundary = [[location.left, location.top]]+ points
         base_boundary = points + [[location.right, location.bottom],
                                   [location.right, location.top]]
-        pygame.draw.polygon(mask_0, kGrey, chief_boundary)
-        pygame.draw.polygon(mask_1, kGrey, base_boundary)
-        return Device("", [FieldSection(surface_0, mask_0),
-                           FieldSection(surface_1, mask_1)])
-    elif orientation == Orientation.BENDWISE:
-        print ("bendwise")
-    elif orientation == Orientation.BENDWISE_SINISTER:
-        print ("bendwise_sinister")
-
+        
+    elif (orientation == Orientation.BENDWISE or
+          orientation == Orientation.BENDWISE_SINISTER):
+        x_increment = int(location.width/num_points)
+        y_increment = int(location.height/num_points)
+        # stick an extra point above and to the left
+        # and one below and to the right
+        # for east of connecting the polygons later
+        if orientation == Orientation.BENDWISE:
+            x_points = range(location.left - x_increment,
+                             location.right + x_increment,
+                             x_increment)
+        else:
+            x_points = range(location.right + x_increment,
+                             location.left - x_increment,                             
+                             -x_increment)
+        y_points = range(location.top - y_increment,
+                         location.bottom + y_increment,
+                         y_increment)
+        if len(x_points) > len(y_points):
+            x_points = x_points[:len(y_points)]
+        if len(y_points) > len(x_points):
+            y_points = y_points[:len(x_points)]
+        point_depth_x = math.sqrt(depth_pixels**2*location.width**2/
+                                  (location.width**2+location.height**2))
+        point_depth_y = math.sqrt(depth_pixels**2-point_depth_x**2)
+        point_depth_x = int(point_depth_x)
+        point_depth_y = int(point_depth_y)
+        x_points = [(x_points[i] + point_depth_x*alternator(i))
+                    for i in range(len(x_points))]
+        if orientation == Orientation.BENDWISE:
+            # note the subtraction here
+            y_points = [(y_points[i] - point_depth_y*alternator(i))
+                        for i in range(len(y_points))]
+        else:
+            y_points = [(y_points[i] + point_depth_y*alternator(i))
+                        for i in range(len(y_points))]
+            
+        points = [[x_points[i], y_points[i]] for i in range(len(x_points))]
+        if (num_points % 2 == 0):
+            chief_boundary = points
+            base_boundary = points[1:len(points)-1]
+        else:
+            chief_boundary = points[:len(points)-1]
+            base_boundary = points[1:]
+        if orientation == Orientation.BENDWISE_SINISTER:
+            chief_boundary, base_boundary = base_boundary, chief_boundary
+        
+    pygame.draw.polygon(mask_0, kGrey, chief_boundary)
+    pygame.draw.polygon(mask_1, kGrey, base_boundary)
+    return Device("", [FieldSection(surface_0, mask_0),
+                       FieldSection(surface_1, mask_1)])
     

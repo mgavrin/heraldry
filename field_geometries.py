@@ -80,7 +80,7 @@ def get_bendy_boundaries(n, location):
     '''
     Returns a list of lists of lists which is the boundary boxes 
       for a bendy of n field.
-    n: the number of sections. Use 2 for per bend sinister.
+    n: the number of sections. Use 2 for per bend.
     location: a Rect representing the location on the screen of the bendy portion of the field.
      If the bendy field should fill the entire shield, the Rect should be 
      Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
@@ -105,7 +105,7 @@ def get_bendy_sinister_boundaries(n, location):
     '''
     Returns a list of lists of lists which is the boundary boxes 
       for a bendy sinister of n field.
-    n: the number of sections. Use 2 for per bend.
+    n: the number of sections. Use 2 for per bend sinister.
     location: a Rect representing the location on the screen of the 
       bendy sinister portion of the field.
       If the bendy sinister field should fill the entire shield, the Rect should be 

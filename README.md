@@ -44,7 +44,7 @@ TODO:
     * Indented
   * TODO:
     * Rayonny
-      * Two arcs per side-of-ray
+      * Implement as two arcs per side-of-ray
     * Embattled
       * counter-embattled
       * embattled-counter-embattled
