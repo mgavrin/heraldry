@@ -51,6 +51,7 @@ def indented(tinctures, endpoints, num_points = 8, depth_pixels = 30):
     field_sections = []
     for i in range(len(endpoints)):
         line = endpoints[i]
+        print(line)
         # x and y distances are defined relative to the order
         # the points are passed in, and either or both
         # may be negative.
@@ -60,8 +61,8 @@ def indented(tinctures, endpoints, num_points = 8, depth_pixels = 30):
             print("Warning: line starts and ends at",
                   line[0], ". Skipping.")
             continue
-        if ((abs(x_distance) < num_points) or
-            (abs(y_distance) < num_points)):
+        if ((abs(x_distance) < num_points and x_distance != 0) or
+            (abs(y_distance) < num_points and y_distance != 0)):
             print("Warning: extreme slopes will be rounded",
                   "to horizontal or vertical.")
         x_increment = int(x_distance/num_points)
@@ -104,7 +105,7 @@ def indented(tinctures, endpoints, num_points = 8, depth_pixels = 30):
         point_depth_y = int(point_depth_y)
         x_points = [(x_points[i] + point_depth_x*alternator(i))
                     for i in range(len(x_points))]
-        if (x_distance >= 0) == (y_distance >= 0):
+        if (x_distance > 0) == (y_distance > 0):
             y_points = [(y_points[i] - point_depth_y*alternator(i))
                         for i in range(len(y_points))]
         else: 
