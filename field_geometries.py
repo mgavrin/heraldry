@@ -111,9 +111,10 @@ def get_bendy_boundaries(n, location):
             [[dexter_chief, location.top],
              [sinister_chief, location.top],
              [location.right, sinister_base], [location.right, dexter_base]])
+        
         if i != 0:
-            endpoints.append([[sinister_chief, location.top],
-                              [location.right, sinister_base]])
+            endpoints.append([[dexter_chief, location.top],
+                              [location.right, dexter_base]])
     return (boundaries, endpoints)
 
 def get_bendy_sinister_boundaries(n, location):
@@ -144,7 +145,7 @@ def get_bendy_sinister_boundaries(n, location):
         if i != 0:
             endpoints.append([[sinister_x, location.top],
                               [location.left, base_y]])
-    print(endpoints)
+    print("Bendy sinister endpoints:", endpoints)
     return (boundaries, endpoints)
 
 def get_chevronelly_boundaries(n, location):
@@ -258,6 +259,7 @@ def get_striped_field(num_sections, tinctures, direction, location,
         pass
     elif line_type == LineType.INDENTED:
         lines = lines_of_division.indented(tinctures, endpoints)
+        #TODO trim mask of each FieldSection in lines
         field.merge(lines)
     else:
         print("Error: Unsupported line type", line_type.name)
