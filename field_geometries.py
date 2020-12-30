@@ -1,5 +1,7 @@
 import math
 from device_generator import *
+import lines_of_division
+from enum import Enum
 constant_definitions =open("constants.py")
 exec(constant_definitions.read())
 
@@ -42,21 +44,26 @@ def get_plain_field(tincture, location):
 
 def get_paly_boundaries(n, location):
     '''
-    Returns a list of lists of lists which is the boundary boxes 
-      for a paly of n field.
+    Returns a tuple of a list of lists of lists which is the boundary boxes 
+      for a paly of n field, and a list of 2-item lists of 2-item lists
+      which are the lines of division. 
     n: the number of stripes. Use 2 for per pale.
     location: a Rect representing the location on the screen of the paly portion of the field.
       If the paly field should fill the entire shield, the Rect should be 
       Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
     '''
     boundaries = []
+    endpoints = []
     for i in range(n):
         left_edge = int(location.left + location.width*i/n)
         right_edge = int(location.left + location.width*(i+1)/n)
         boundaries.append(
             [[left_edge, location.top], [left_edge, location.bottom],
              [right_edge, location.bottom], [right_edge, location.top]])
-    return boundaries
+        if i != 0:
+            endpoints.append([[left_edge, location.top],
+                              [left_edge, location.bottom]])
+    return (boundaries, endpoints)
 
 def get_barry_boundaries(n, location):
     '''
@@ -68,13 +75,17 @@ def get_barry_boundaries(n, location):
      Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
     '''
     boundaries = []
+    endpoints = []
     for i in range(n):
         top_edge = int(location.top + location.height*i/n)
         bottom_edge = int(location.top + location.height*(i+1)/n)
         boundaries.append(
             [[location.left, top_edge], [location.right, top_edge],
              [location.right, bottom_edge], [location.left, bottom_edge]])
-    return boundaries
+        if i != 0:
+            endpoints.append([[location.left, top_edge],
+                              [location.right, top_edge]])
+    return (boundaries, endpoints)
 
 def get_bendy_boundaries(n, location):
     '''
@@ -86,9 +97,10 @@ def get_bendy_boundaries(n, location):
      Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
     '''
     boundaries = []
+    endpoints = []
     for i in range(n):
         # multiply by 2 because you need a 2x rectangle to get
-        # every stripe from top to left. This will produce some
+        # every stripe from top to right. This will produce some
         # boundaries that go outside the location rect, but get_striped_field
         # will trim them later.
         dexter_chief = location.right - int(location.width*i*2/n)
@@ -99,7 +111,10 @@ def get_bendy_boundaries(n, location):
             [[dexter_chief, location.top],
              [sinister_chief, location.top],
              [location.right, sinister_base], [location.right, dexter_base]])
-    return boundaries
+        if i != 0:
+            endpoints.append([[sinister_chief, location.top],
+                              [location.right, sinister_base]])
+    return (boundaries, endpoints)
 
 def get_bendy_sinister_boundaries(n, location):
     '''
@@ -112,6 +127,7 @@ def get_bendy_sinister_boundaries(n, location):
       Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
     '''
     boundaries = []
+    endpoints = []
     for i in range(n):
         # multiply by 2 because you need a 2x rectangle to get
         # every stripe from top to left. This will produce some
@@ -125,7 +141,11 @@ def get_bendy_sinister_boundaries(n, location):
             [[dexter_x, location.top],
              [sinister_x, location.top],
              [location.left, base_y], [location.left, chief_y]])
-    return boundaries
+        if i != 0:
+            endpoints.append([[sinister_x, location.top],
+                              [location.left, base_y]])
+    print(endpoints)
+    return (boundaries, endpoints)
 
 def get_chevronelly_boundaries(n, location):
     '''
@@ -180,16 +200,24 @@ def get_chevronelly_inverted_boundaries(n, location):
                            [location.left, int(location.top+total_height*(i+1)/n-y_offset)]])
     return boundaries
 
-def get_striped_field(num_sections, tinctures, direction, location):
+class LineType(Enum):
+    PLAIN = 0
+    INDENTED = 1
+
+def get_striped_field(num_sections, tinctures, direction, location,
+                      line_type = LineType.PLAIN):
     '''
     Returns a Device with a field containing one or more parallel lines of division.
     num_sections: the number of sections.
     tinctures: a list of tincture objects, e.g. [kVert, kArgent], dexter chief zeroth.
     direction: a string indicating direction.
       Must be one of the keys in the dict below.
-    location: a Rect representing the location on the screen of the striped portion of the field.
+    location: a Rect representing the location on the screen of the
+      striped portion of the field.
       If the striped field should fill the entire shield, the Rect should be 
       Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
+    line_type: a LineType enum value indicating whether the lines of division
+      should be simple or a particular complex type.
     '''
     # The values in this dict are functions.
     directions = {"per pale": get_paly_boundaries, "paly": get_paly_boundaries,
@@ -202,7 +230,7 @@ def get_striped_field(num_sections, tinctures, direction, location):
                   "per chevron inverted": get_chevronelly_inverted_boundaries,
                   "chevronelly inverted": get_chevronelly_inverted_boundaries}
     field_sections = []
-    boundaries = directions[direction](num_sections, location)
+    (boundaries, endpoints) = directions[direction](num_sections, location)
     size = (kScreenWidth, kScreenHeight)
     # One surface and mask per tincture
     masks_by_tincture = {}
@@ -223,7 +251,18 @@ def get_striped_field(num_sections, tinctures, direction, location):
 
     for (surface, mask) in masks_by_tincture.values():
         field_sections.append(FieldSection(surface, mask))
-    return Device("", field_sections)
+
+    field = Device("", field_sections)
+    
+    if line_type == LineType.PLAIN:
+        pass
+    elif line_type == LineType.INDENTED:
+        lines = lines_of_division.indented(tinctures, endpoints)
+        field.merge(lines)
+    else:
+        print("Error: Unsupported line type", line_type.name)
+    
+    return field
 
 def get_quarterly_field(tinctures, location):
     '''

@@ -8,7 +8,6 @@ exec(constant_definitions.read())
 full_shield = Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin)
 small_square = Rect(300, 300, 200, 200)
 # Plain field
-'''
 field_geometries.get_plain_field(kPurpure, full_shield).display_device()
 # Two-color parallel sections
 field_geometries.get_striped_field(2, [kPurpure, kArgent], "per pale", full_shield).display_device()
@@ -17,6 +16,7 @@ field_geometries.get_striped_field(2, [kPurpure, kArgent], "per fess", full_shie
 field_geometries.get_striped_field(7, [kPurpure, kArgent], "barry", full_shield).display_device()
 field_geometries.get_striped_field(2, [kPurpure, kArgent], "per bend", full_shield).display_device()
 field_geometries.get_striped_field(7, [kPurpure, kArgent], "bendy", full_shield).display_device()
+'''
 field_geometries.get_striped_field(2, [kPurpure, kArgent], "per bend sinister", full_shield).display_device()
 field_geometries.get_striped_field(7, [kPurpure, kArgent], "bendy sinister", full_shield).display_device()
 field_geometries.get_striped_field(2, [kPurpure, kArgent], "per chevron", full_shield).display_device()
