@@ -95,26 +95,68 @@ def get_bendy_boundaries(n, location):
     location: a Rect representing the location on the screen of the bendy portion of the field.
      If the bendy field should fill the entire shield, the Rect should be 
      Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
+     Note: due to the taper at the bottom of the shield, if the bendy field is on the full
+     shield the dexter base stripe(s) may not be visible.
     '''
     boundaries = []
+    # TODO change this to a set for performance improvement
+    # via duplicate removal
     endpoints = []
-    for i in range(n):
-        # multiply by 2 because you need a 2x rectangle to get
-        # every stripe from top to right. This will produce some
-        # boundaries that go outside the location rect, but get_striped_field
-        # will trim them later.
-        dexter_chief = location.right - int(location.width*i*2/n)
-        sinister_chief = location.right - int(location.width*(i+1)*2/n)
-        dexter_base = location.top + int(location.height*(i)*2/n)
-        sinister_base = location.top + int(location.height*(i+1)*2/n)
-        boundaries.append(
-            [[dexter_chief, location.top],
-             [sinister_chief, location.top],
-             [location.right, sinister_base], [location.right, dexter_base]])
-        
-        if i != 0:
-            endpoints.append([[dexter_chief, location.top],
-                              [location.right, dexter_base]])
+    
+    # Every stripe goes along either the chief and sinister edges
+    # or the dexter and base edges, except the middle
+    # stripe if n is odd.
+    # If n is even, there will be a boundary line from the
+    # Dexter chief corner to the sinister base corner.
+    x_interval = int(location.width/(n/2))
+    y_interval = int(location.height/(n/2))
+    # Chief and sinister edges:
+    # This will be negative
+    slope = int(location.height/location.width)
+    # The x and y coordinates of the stripe boundary points,
+    # sinister to dexter and chief to base, including both
+    # endpoints in the case of even n and not including the
+    # dexter/base endpoint in the case of odd n.
+    if n%2 == 0:
+        x_points = list(range(location.right, location.left-5,
+                              int(-location.width/(n/2))))
+        y_points = list(range(location.top, location.bottom+5,
+                              int(location.height/(n/2))))
+    else:
+        x_points = list(range(location.right, location.left,
+                              int(-location.width/(n/2))))
+        y_points = list(range(location.top, location.bottom,
+                              int(location.height/(n/2))))
+    print("n is", n,
+          "and len(x_points) is", len(x_points),
+          "and len(y_points) is", len(y_points))
+    for i in range(int(n/2)):
+        # stripes that touch the chief and dexter edges;
+        # widdershins from sinister chief.
+        boundaries.append([[x_points[i], location.top],
+                           [x_points[i+1], location.top],
+                           [location.right, y_points[i+1]],
+                           [location.right, y_points[i]]])
+        endpoints.append([[x_points[i+1], location.top],
+                           [location.right, y_points[i+1]]])
+    # These need to be two four loops so the sections end
+    # up in the right order!
+    for i in range(int(n/2)):
+        # stripes that touch the sinister and base edges;
+        # deasil from sinister base
+        boundaries.append([[x_points[i], location.bottom],
+                           [x_points[i+1], location.bottom],
+                           [location.left, y_points[i+1]],
+                           [location.left, y_points[i]]])
+        endpoints.append([[x_points[i], location.bottom],
+                          [location.left, y_points[-(i+2)]]])
+    # make sure to get the middle section if n is odd
+    if n%2 == 1:
+        boundaries.append([[x_points[-2], location.top],
+                           [x_points[-1], location.top],
+                           [location.left, y_points[1]],
+                           [x_points[1], location.bottom]])
+    print("len(boundaries) is", len(boundaries))
     return (boundaries, endpoints)
 
 def get_bendy_sinister_boundaries(n, location):
