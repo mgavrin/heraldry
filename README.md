@@ -1,14 +1,5 @@
 Resources for generating SCA armory art.
 
-TODO:
-* Convert all these TODOs into github issues.
-* Refactor lines of division to integrate it more tightly with FieldSections.
-  A Device should take a line-shape enum value as an argument and create its own
-  lines by passing in boundary points. Lines should take end points as arguments.
-* Make a Boundaries type and an Endpoints type that handle validation of the
-  list shapes and provide a convenient place for documenting their many-layered nature.
-* type hints
-
 * Field divisions
   * Supported:
     * Per pale

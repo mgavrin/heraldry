@@ -47,10 +47,12 @@ class Device:
             for x in range(kScreenWidth):
                 for y in range(kScreenHeight):
                     if section.mask.get_at((x,y)) == kGrey:
-                        self.screen.set_at((x,y), section.surface.get_at((x,y)))
+                        self.screen.set_at((x,y),
+                                           section.surface.get_at((x,y)))
         for charge in self.charge_groups:
             pass
             #charge.draw_charge()
+            
         # Add the shield outline
         shield_mask = pygame.transform.scale(
             pygame.image.load(os.path.join("art", "shield mask vector.png")),

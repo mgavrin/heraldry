@@ -17,7 +17,7 @@ field_geometries.get_striped_field(2, [kPurpure, kArgent], "per fess", full_shie
 field_geometries.get_striped_field(7, [kPurpure, kArgent], "barry", full_shield).display_device()
 '''
 field_geometries.get_striped_field(2, [kPurpure, kArgent], "per bend", full_shield).display_device()
-field_geometries.get_striped_field(7, [kPurpure, kArgent], "bendy", small_square).display_device()
+field_geometries.get_striped_field(5, [kPurpure, kArgent], "bendy", small_square).display_device()
 field_geometries.get_striped_field(8, [kPurpure, kArgent], "bendy", full_shield).display_device()
 '''
 field_geometries.get_striped_field(2, [kPurpure, kArgent], "per bend sinister", full_shield).display_device()

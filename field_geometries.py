@@ -90,73 +90,69 @@ def get_barry_boundaries(n, location):
 def get_bendy_boundaries(n, location):
     '''
     Returns a list of lists of lists which is the boundary boxes 
-      for a bendy of n field.
+      for a bendy of n field, and a set of lists of 2-item lists
+      which are the endpointsof the lines of division.
     n: the number of sections. Use 2 for per bend.
-    location: a Rect representing the location on the screen of the bendy portion of the field.
-     If the bendy field should fill the entire shield, the Rect should be 
-     Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
-     Note: due to the taper at the bottom of the shield, if the bendy field is on the full
-     shield the dexter base stripe(s) may not be visible.
+    location: a Rect representing the location on the screen
+      of the bendy portion of the field.
+      If the bendy field should fill the entire shield, the Rect should be 
+      Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
+    Note: due to the taper at the bottom of the shield, if the bendy field is on the full
+      shield the dexter base stripe(s) may not be visible.
     '''
     boundaries = []
-    # TODO change this to a set for performance improvement
-    # via duplicate removal
     endpoints = []
     
     # Every stripe goes along either the chief and sinister edges
     # or the dexter and base edges, except the middle
     # stripe if n is odd.
-    # If n is even, there will be a boundary line from the
-    # Dexter chief corner to the sinister base corner.
-    x_interval = int(location.width/(n/2))
-    y_interval = int(location.height/(n/2))
-    # Chief and sinister edges:
-    # This will be negative
-    slope = int(location.height/location.width)
-    # The x and y coordinates of the stripe boundary points,
-    # sinister to dexter and chief to base, including both
-    # endpoints in the case of even n and not including the
-    # dexter/base endpoint in the case of odd n.
-    if n%2 == 0:
-        x_points = list(range(location.right, location.left-5,
-                              int(-location.width/(n/2))))
-        y_points = list(range(location.top, location.bottom+5,
-                              int(location.height/(n/2))))
-    else:
-        x_points = list(range(location.right, location.left,
-                              int(-location.width/(n/2))))
-        y_points = list(range(location.top, location.bottom,
-                              int(location.height/(n/2))))
-    print("n is", n,
-          "and len(x_points) is", len(x_points),
-          "and len(y_points) is", len(y_points))
+
+    # The coordinates of the stripe boundary points,
+    # going from the corner triangles to the central stripe.
+    x_half_interval = int(location.width/n)
+    y_half_interval = int(location.height/n)
+    chief_points = []
+    base_points = []
+    dexter_points = []
+    sinister_points = []
+    counter = 0
+    while counter*x_half_interval*2 <= location.width:
+        # The +1 and -1 compensate for rounding errors
+        base_points.append(location.left + counter*x_half_interval*2 + 1)
+        chief_points.append(location.right - counter*x_half_interval*2 - 1)
+        sinister_points.append(location.top + counter*y_half_interval*2 + 1)
+        dexter_points.append(location.bottom - counter*y_half_interval*2 - 1)
+        counter += 1
+
+    # These three blocks need to be in this order
+    # so they get blit in the right order with alternating tinctures!
     for i in range(int(n/2)):
         # stripes that touch the chief and dexter edges;
         # widdershins from sinister chief.
-        boundaries.append([[x_points[i], location.top],
-                           [x_points[i+1], location.top],
-                           [location.right, y_points[i+1]],
-                           [location.right, y_points[i]]])
-        endpoints.append([[x_points[i+1], location.top],
-                           [location.right, y_points[i+1]]])
-    # These need to be two four loops so the sections end
-    # up in the right order!
-    for i in range(int(n/2)):
-        # stripes that touch the sinister and base edges;
-        # deasil from sinister base
-        boundaries.append([[x_points[i], location.bottom],
-                           [x_points[i+1], location.bottom],
-                           [location.left, y_points[i+1]],
-                           [location.left, y_points[i]]])
-        endpoints.append([[x_points[i], location.bottom],
-                          [location.left, y_points[-(i+2)]]])
+        boundaries.append([[chief_points[i], location.top],
+                           [chief_points[i+1], location.top],
+                           [location.right, sinister_points[i+1]],
+                           [location.right, sinister_points[i]]])
+        endpoints.append([[chief_points[i+1], location.top],
+                          [location.right, sinister_points[i+1]]])
     # make sure to get the middle section if n is odd
     if n%2 == 1:
-        boundaries.append([[x_points[-2], location.top],
-                           [x_points[-1], location.top],
-                           [location.left, y_points[1]],
-                           [x_points[1], location.bottom]])
-    print("len(boundaries) is", len(boundaries))
+        boundaries.append([[chief_points[-1], location.top],
+                           [location.left, location.top],
+                           [location.left, dexter_points[-1]],
+                           [base_points[-1], location.bottom],
+                           [location.right, location.bottom],
+                           [location.right, sinister_points[-1]]])
+    for i in range(int(n/2)-1, -1, -1):
+        # Stripes that touch the sinister and base edges;
+        # deasil from sinister base. Count down i to go from
+        # center to corner or the alternating tinctures will be wrong.
+        boundaries.append([[base_points[i+1], location.bottom],
+                           [base_points[i], location.bottom],
+                           [location.left, dexter_points[i]],
+                           [location.left, dexter_points[i+1]]])
+        endpoints.append([[location.left, dexter_points[i+1]],
+                           [base_points[i+1], location.bottom]])
     return (boundaries, endpoints)
 
 def get_bendy_sinister_boundaries(n, location):
@@ -290,6 +286,10 @@ def get_striped_field(num_sections, tinctures, direction, location,
         # don't let them
         mask.set_clip(location)
         pygame.draw.polygon(mask, kGrey, boundaries[i])
+        # TAKE THIS OUT
+        for point in boundaries[i]:
+            pygame.draw.circle(surface, kAzure, point, 6)
+        # END TAKE THIS OUT
         mask = trim_mask(mask, location)
 
     for (surface, mask) in masks_by_tincture.values():
@@ -301,7 +301,8 @@ def get_striped_field(num_sections, tinctures, direction, location,
         pass
     elif line_type == LineType.INDENTED:
         lines = lines_of_division.indented(tinctures, endpoints)
-        #TODO trim mask of each FieldSection in lines
+        for section in lines.field_sections:
+            section.mask = trim_mask(section.mask, location)
         field.merge(lines)
     else:
         print("Error: Unsupported line type", line_type.name)

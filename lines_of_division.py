@@ -27,8 +27,8 @@ def get_longest_line_increments(endpoints, num_points):
         y_distance = line[1][1] - line[0][1]
         total_distance = math.sqrt(x_distance**2 + y_distance**2)
         if total_distance > greatest_distance:
-            x_increment = int(x_distance/num_points)
-            y_increment = int(y_distance/num_points)
+            x_increment = abs(int(x_distance/num_points))
+            y_increment = abs(int(y_distance/num_points))
     return (x_increment, y_increment)
             
         
@@ -63,12 +63,10 @@ def indented(tinctures, endpoints, num_points = 8, depth_pixels = 30):
     # Setup
     size = (kScreenWidth, kScreenHeight)
     surface_0 = pygame.Surface(size, 0, 32)
-    surface_0.fill(kAzure)
-    #surface_0.fill(tinctures[0])
+    surface_0.fill(tinctures[0])
     mask_0 = pygame.Surface(size, 0, 32)
     surface_1 = pygame.Surface(size, 0, 32)
-    surface_1.fill(kVert)
-    #surface_1.fill(tinctures[1])
+    surface_1.fill(tinctures[1])
     mask_1 = pygame.Surface(size, 0, 32)
     # The important bit
     (x_increment, y_increment) = get_longest_line_increments(
@@ -102,27 +100,33 @@ def indented(tinctures, endpoints, num_points = 8, depth_pixels = 30):
             # will be in the wrong order!
             x_points = range(line[0][0] + 2*x_increment,
                              line[1][0] - 2*x_increment,
-                             x_increment)
-            print("x_points is", x_points)
+                             -x_increment)
         else:
             x_points = [line[0][0]] * (num_points + 4)
+            
         if y_distance > 0:
             y_points = range(line[0][1] - 2*y_increment,
                              line[1][1] + 2*y_increment,
                              y_increment)
-            print("y_points is", y_points)
         elif y_distance < 0:
             # You need the negative weirdness or the points
             # will be in the wrong order!
             y_points = range(line[0][1] + 2*y_increment,
                              line[1][1] - 2*y_increment,
-                             y_increment)
+                             -y_increment)
         else:
             y_points = [line[0][1]] * (num_points + 4)
+            
         if len(x_points) > len(y_points):
             x_points = x_points[:len(y_points)]
         if len(y_points) > len(x_points):
             y_points = y_points[:len(x_points)]
+        # If depth_pixels is too large, the lines from different
+        # sections will interfere with each other and also it
+        # will look awful.
+        if depth_pixels > min(x_increment, y_increment)/2:
+            print("Warning: reducing depth_pixels to prevent line collisions.")
+            depth_pixels = min(x_increment, y_increment)/2
         point_depth_x = math.sqrt(depth_pixels**2 * y_distance**2 /
                                   (y_distance**2 + x_distance**2))
         point_depth_y = math.sqrt(depth_pixels**2-point_depth_x**2)
@@ -133,14 +137,11 @@ def indented(tinctures, endpoints, num_points = 8, depth_pixels = 30):
         if (x_distance > 0) == (y_distance > 0):
             y_points = [(y_points[i] - point_depth_y*alternator(i))
                         for i in range(len(y_points))]
-        else: 
+        else:
             y_points = [(y_points[i] + point_depth_y*alternator(i))
                         for i in range(len(y_points))]
         points = [[x_points[i], y_points[i]] for i in range(len(x_points))]
-        print("Points are",points)
-        # TODO take this out
-        for point in points:
-            pygame.draw.circle(mask_0, kGrey, point, 5)
+    
         if (len(points) % 2 == 0):
             chief_boundary = points[1:]
             base_boundary = points[:len(points)-1]
