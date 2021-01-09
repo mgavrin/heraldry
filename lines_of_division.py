@@ -74,7 +74,6 @@ def indented(tinctures, endpoints, num_points = 8, depth_pixels = 30):
     field_sections = []
     for i in range(len(endpoints)):
         line = endpoints[i]
-        print("Line is", line)
         # x and y distances are defined relative to the order
         # the points are passed in, and either or both
         # may be negative.
@@ -121,12 +120,6 @@ def indented(tinctures, endpoints, num_points = 8, depth_pixels = 30):
             x_points = x_points[:len(y_points)]
         if len(y_points) > len(x_points):
             y_points = y_points[:len(x_points)]
-        # If depth_pixels is too large, the lines from different
-        # sections will interfere with each other and also it
-        # will look awful.
-        if depth_pixels > min(x_increment, y_increment)/2:
-            print("Warning: reducing depth_pixels to prevent line collisions.")
-            depth_pixels = min(x_increment, y_increment)/2
         point_depth_x = math.sqrt(depth_pixels**2 * y_distance**2 /
                                   (y_distance**2 + x_distance**2))
         point_depth_y = math.sqrt(depth_pixels**2-point_depth_x**2)
@@ -141,14 +134,15 @@ def indented(tinctures, endpoints, num_points = 8, depth_pixels = 30):
             y_points = [(y_points[i] + point_depth_y*alternator(i))
                         for i in range(len(y_points))]
         points = [[x_points[i], y_points[i]] for i in range(len(x_points))]
-    
+
         if (len(points) % 2 == 0):
             chief_boundary = points[1:]
             base_boundary = points[:len(points)-1]
         else:
             chief_boundary = points[1:len(points)-1]
             base_boundary = points
-            
+
+        
         # Make sure the chief boundary starts out on top
         # for mostly-horizontal lines
         if (x_distance > y_distance and
@@ -160,6 +154,7 @@ def indented(tinctures, endpoints, num_points = 8, depth_pixels = 30):
             chief_boundary[0][0] > base_boundary[0][0]):
             chief_boundary, base_boundary = base_boundary, chief_boundary
             
+        
         # reverse direction on multiple stripes (e.g. paly)
         if (i%2 == 1):
             chief_boundary, base_boundary = base_boundary, chief_boundary

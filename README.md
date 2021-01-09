@@ -1,5 +1,7 @@
 Resources for generating SCA armory art.
 
+Next thing to do: parity weirdness on even numbered invected bendy
+
 * Field divisions
   * Supported:
     * Per pale
@@ -183,3 +185,8 @@ Resources for generating SCA armory art.
   * Vair
   * Figure out how to go through an image pixel by pixel and swap colors,
     so you can have arbitrary tinctures of ermine and vair and arbitrary tinctures around a complex line
+
+
+* Ambitious future plans
+  * Anki deck
+  * "Battlefield recognizability test" that flashes pairs of arms briefly and asks "same or different"

@@ -151,8 +151,10 @@ def get_bendy_boundaries(n, location):
                            [base_points[i], location.bottom],
                            [location.left, dexter_points[i]],
                            [location.left, dexter_points[i+1]]])
-        endpoints.append([[location.left, dexter_points[i+1]],
-                           [base_points[i+1], location.bottom]])
+        # Don't repeat the middle endpoint when there's an even number
+        if (n%2 == 1 or i != int(n/2)-1):
+            endpoints.append([[location.left, dexter_points[i+1]],
+                              [base_points[i+1], location.bottom]])
     return (boundaries, endpoints)
 
 def get_bendy_sinister_boundaries(n, location):
@@ -186,6 +188,7 @@ def get_bendy_sinister_boundaries(n, location):
     print("Bendy sinister endpoints:", endpoints)
     return (boundaries, endpoints)
 
+#TODO endpoints
 def get_chevronelly_boundaries(n, location):
     '''
     Returns a list of lists of lists which is the boundary boxes 
@@ -231,12 +234,13 @@ def get_chevronelly_inverted_boundaries(n, location):
     # underneath. get_striped_field will trim off the extra.
     total_height = location.height+y_offset
     for i in range(n):
-        boundaries.append([[location.left, int(location.top+total_height*i/n-y_offset)],
-                           [location.centerx, int(location.top+total_height*i/n)],
-                           [location.right, int(location.top+total_height*i/n-y_offset)],
-                           [location.right, int(location.top+total_height*(i+1)/n-y_offset)],
-                           [location.centerx, int(location.top+total_height*(i+1)/n)],
-                           [location.left, int(location.top+total_height*(i+1)/n-y_offset)]])
+        boundaries.append(
+            [[location.left, int(location.top+total_height*i/n-y_offset)],
+             [location.centerx, int(location.top+total_height*i/n)],
+             [location.right, int(location.top+total_height*i/n-y_offset)],
+             [location.right, int(location.top+total_height*(i+1)/n-y_offset)],
+             [location.centerx, int(location.top+total_height*(i+1)/n)],
+             [location.left, int(location.top+total_height*(i+1)/n-y_offset)]])
     return boundaries
 
 class LineType(Enum):
@@ -286,10 +290,6 @@ def get_striped_field(num_sections, tinctures, direction, location,
         # don't let them
         mask.set_clip(location)
         pygame.draw.polygon(mask, kGrey, boundaries[i])
-        # TAKE THIS OUT
-        for point in boundaries[i]:
-            pygame.draw.circle(surface, kAzure, point, 6)
-        # END TAKE THIS OUT
         mask = trim_mask(mask, location)
 
     for (surface, mask) in masks_by_tincture.values():
@@ -948,7 +948,7 @@ def get_scaly_field(num_sections, tinctures, location):
       Rect(kXMargin, kYMargin, kScreenWidth-2*kXMargin, kShieldBottom-kYMargin).
     '''
     if len(tinctures) != 2:
-        print("A scalyk field must have exactly 2 tinctures.")
+        print("A scaly field must have exactly 2 tinctures.")
         return Device("")
     size = (kScreenWidth, kScreenHeight)
     surface = pygame.Surface(size, 0, 32)
